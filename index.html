@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Repaso escrito diario</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: una hoja de ejercicio. Arriba eliges qué y cuánta ayuda; en medio la lista numerada que llenas de corrido; abajo tus últimas vueltas. */
+:root{
+  --paper:#f6f7f5; --sheet:#ffffff; --ink:#1d2321; --muted:#66706b; --line:#dfe3e0;
+  --accent:#2f6f5e; --accent-soft:#e3efe9; --trace:#bcc4bf;
+  --ok:#2f7d4f; --ok-soft:#e2f2e7; --bad:#b4442f; --bad-soft:#f8e5e0; --warn:#9a6a12; --warn-soft:#f6edd9;
+  --f-name:"Literata", Georgia, "Times New Roman", serif;
+  --f-ui:"Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-num:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#141816; --sheet:#1c211f; --ink:#e6ebe8; --muted:#9aa49f; --line:#2e3532;
+  --accent:#7cc4ab; --accent-soft:#1f3530; --trace:#4b554f;
+  --ok:#7fcf9b; --ok-soft:#1d3326; --bad:#ec8c78; --bad-soft:#3a221d; --warn:#e2b45c; --warn-soft:#352b17; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#141816; --sheet:#1c211f; --ink:#e6ebe8; --muted:#9aa49f; --line:#2e3532;
+  --accent:#7cc4ab; --accent-soft:#1f3530; --trace:#4b554f;
+  --ok:#7fcf9b; --ok-soft:#1d3326; --bad:#ec8c78; --bad-soft:#3a221d; --warn:#e2b45c; --warn-soft:#352b17; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-ui);font-size:15px;line-height:1.5}
+.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:24px 48px;display:grid;gap:20px}
+header{display:grid;gap:6px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-name);font-weight:600;font-size:clamp(24px,5vw,32px);line-height:1.15;margin:0;text-wrap:balance}
+.lede{color:var(--muted);margin:0;max-width:62ch}
+.controls{display:grid;gap:14px}
+.ctl{display:grid;gap:6px;min-width:0}
+.lab{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);border-radius:999px;padding:6px 13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--sheet)}
+.chip:disabled{opacity:.45;cursor:not-allowed}
+.chip small{font-family:var(--f-num);font-size:11px;opacity:.75;margin-left:6px}
+.chip:focus-visible,.btn:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.toggle{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.sheet{background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:18px 16px;display:grid;gap:4px;min-width:0}
+.sec{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:12px 0 4px}
+.sec:first-child{padding-top:0}
+.row{display:grid;grid-template-columns:5.2em minmax(0,1fr);gap:10px;align-items:start;padding:3px 0}
+.k{font-family:var(--f-num);font-size:15px;color:var(--accent);padding-top:9px;font-variant-numeric:tabular-nums}
+.cell{display:grid;gap:3px;min-width:0}
+.field{position:relative;min-width:0}
+.trace,.inp{font-family:var(--f-name);font-size:18px;line-height:1.3;padding:7px 10px;border-radius:8px;width:100%}
+.trace{position:absolute;inset:0;color:var(--trace);pointer-events:none;border:1px solid transparent;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inp{position:relative;display:block;border:1px solid var(--line);background:transparent;color:var(--ink)}
+.row.ok .inp{border-color:var(--ok);background:var(--ok-soft)}
+.row.bad .inp{border-color:var(--bad);background:var(--bad-soft)}
+.row.warn .inp{border-color:var(--warn);background:var(--warn-soft)}
+.res{font-size:13.5px;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.res .mark{font-weight:600}
+.row.ok .mark{color:var(--ok)} .row.bad .mark{color:var(--bad)} .row.warn .mark{color:var(--warn)}
+.res .ans{font-family:var(--f-name);font-size:15.5px}
+.res .full{color:var(--muted)}
+.res .msg{flex-basis:100%;color:var(--warn)}
+.row.bad .res .msg{color:var(--bad)}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.score{font-family:var(--f-num);font-size:22px;font-variant-numeric:tabular-nums}
+.btn{font:inherit;font-weight:600;font-size:14px;border-radius:8px;padding:9px 16px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:var(--sheet)}
+.btn.ghost{background:transparent;color:var(--accent)}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.note{font-size:12.5px;color:var(--muted)}
+.log{display:grid;gap:8px}
+.log h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:0}
+.log table{width:100%;border-collapse:collapse;font-size:13.5px}
+.log td,.log th{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+.log th{font-weight:500;color:var(--muted)}
+.log td.n{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.tblwrap{overflow-x:auto}
+footer{font-size:12.5px;color:var(--muted);display:grid;gap:4px}
+kbd{font-family:var(--f-num);font-size:11.5px;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Certificación CNBV PLD/FT · repaso de 10 minutos</div>
+    <h1>Una palabra por número, de corrido</h1>
+    <p class="lede">Llena toda la lista sin ver nada y revisa una sola vez al final. Las que falles las repites solas hasta que salgan.</p>
+  </header>
+
+  <section class="controls" aria-label="Qué vas a repasar">
+    <div class="ctl"><span class="lab">Serie</span><div class="chips" id="decks"></div></div>
+    <div class="ctl"><span class="lab">Ayuda</span><div class="chips" id="levels"></div></div>
+    <div class="ctl"><span class="lab">Qué escribes</span><div class="chips" id="modes"></div></div>
+    <label class="toggle"><input type="checkbox" id="shuffle"> En desorden</label>
+  </section>
+
+  <section class="sheet" id="sheet" aria-label="Lista para llenar"></section>
+
+  <div class="bar" id="bar"></div>
+
+  <section class="log" id="log"></section>
+
+  <footer>
+    <div><kbd>Enter</kbd> o <kbd>Tab</kbd> pasa a la siguiente línea. En la última, <kbd>Enter</kbd> revisa todo.</div>
+    <div>Recomendaciones: las palabras son tuyas (notas del 13-oct); las de R.1–8 y R.24–25 las propuse yo. Los nombres oficiales salen de Las Recomendaciones del GAFI, traducción al español de diciembre de 2025 (GAFILAT), índice págs. 6–8 y encabezados págs. 12–33.</div>
+    <div>Módulo 3: tus palabras, cotejadas por el coordinador del M3 contra los Lineamientos del Informe de Auditoría (DOF 18-oct-2021) y el Reglamento de Supervisión de la CNBV (reforma 21-jul-2021). Se califica sin importar acentos, mayúsculas ni puntuación.</div>
+  </footer>
+</div>
+
+<script>
+
+const R = [
+ ["1","Evaluación de riesgos y aplicación de un enfoque basado en riesgo","A · Políticas y coordinación ALA/CFT"],
+ ["2","Cooperación y coordinación nacional","A · Políticas y coordinación ALA/CFT"],
+ ["3","Delito de lavado de activos","B · Lavado de activos y decomiso"],
+ ["4","Decomiso y medidas provisionales","B · Lavado de activos y decomiso"],
+ ["5","Delito de financiamiento del terrorismo","C · Financiamiento del terrorismo y de la proliferación"],
+ ["6","Sanciones financieras dirigidas relacionadas con el terrorismo y el financiamiento del terrorismo","C · Financiamiento del terrorismo y de la proliferación"],
+ ["7","Sanciones financieras dirigidas relacionadas con la proliferación","C · Financiamiento del terrorismo y de la proliferación"],
+ ["8","Organizaciones sin fines de lucro","C · Financiamiento del terrorismo y de la proliferación"],
+ ["9","Leyes sobre el secreto de las instituciones financieras","D · Medidas preventivas"],
+ ["10","Debida diligencia del cliente","D · Medidas preventivas · DDC y registros"],
+ ["11","Mantenimiento de registros","D · Medidas preventivas · DDC y registros"],
+ ["12","Personas expuestas políticamente","D · Medidas preventivas · Clientes y actividades específicas"],
+ ["13","Banca corresponsal","D · Medidas preventivas · Clientes y actividades específicas"],
+ ["14","Servicios de transferencia de dinero o valores","D · Medidas preventivas · Clientes y actividades específicas"],
+ ["15","Nuevas tecnologías","D · Medidas preventivas · Clientes y actividades específicas"],
+ ["16","Transparencia de pagos","D · Medidas preventivas · Clientes y actividades específicas"],
+ ["17","Dependencia en terceros","D · Medidas preventivas · Dependencia, controles y grupos financieros"],
+ ["18","Controles internos y filiales y subsidiarias","D · Medidas preventivas · Dependencia, controles y grupos financieros","Controles internos y sucursales y filiales extranjeras"],
+ ["19","Países de mayor riesgo","D · Medidas preventivas · Dependencia, controles y grupos financieros"],
+ ["20","Reporte de operaciones sospechosas","D · Medidas preventivas · Reporte de operaciones sospechosas"],
+ ["21","Revelación (tipping-off) y confidencialidad","D · Medidas preventivas · Reporte de operaciones sospechosas"],
+ ["22","APNFD: debida diligencia del cliente","D · Medidas preventivas · APNFD"],
+ ["23","APNFD: otras medidas","D · Medidas preventivas · APNFD"],
+ ["24","Transparencia y beneficiario final de las personas jurídicas","E · Transparencia y beneficiario final"],
+ ["25","Transparencia y beneficiario final de otras estructuras jurídicas","E · Transparencia y beneficiario final","Transparencia y beneficiario final de estructuras jurídicas"],
+ ["26","Regulación y supervisión de las instituciones financieras","F · Autoridades competentes · Regulación y supervisión","Regulación y supervisión de instituciones financieras"],
+ ["27","Facultades de los supervisores","F · Autoridades competentes · Regulación y supervisión"],
+ ["28","Regulación y supervisión de las APNFD","F · Autoridades competentes · Regulación y supervisión"],
+ ["29","Unidades de inteligencia financiera","F · Autoridades competentes · Operativo y orden público"],
+ ["30","Responsabilidades de las autoridades de orden público e investigativas","F · Autoridades competentes · Operativo y orden público","Responsabilidades de las autoridades del orden público e investigativas"],
+ ["31","Facultades de las autoridades de orden público e investigativas","F · Autoridades competentes · Operativo y orden público","Facultades de las autoridades del orden público e investigativas"],
+ ["32","Transporte de efectivo","F · Autoridades competentes · Operativo y orden público"],
+ ["33","Estadísticas","F · Autoridades competentes · Requisitos generales"],
+ ["34","Guía y retroalimentación","F · Autoridades competentes · Requisitos generales"],
+ ["35","Sanciones","F · Autoridades competentes · Sanciones"],
+ ["36","Instrumentos internacionales","G · Cooperación internacional"],
+ ["37","Asistencia legal mutua","G · Cooperación internacional"],
+ ["38","Asistencia legal mutua: congelamiento y decomiso","G · Cooperación internacional"],
+ ["39","Extradición","G · Cooperación internacional"],
+ ["40","Otras formas de cooperación internacional","G · Cooperación internacional"]
+].map(([n,t,g,alt])=>({k:"R."+n,t,g:g.split(" · ").slice(0,2).join(" · "),alt}));
+const rng=(a,b)=>R.slice(a-1,b);
+
+/* Palabras clave de Maribel (sus notas del 13-oct). [palabra, otras formas aceptadas, formas aceptadas con aviso {forma: aviso}] */
+const KW={
+ 1:["Riesgo",["EBR","enfoque basado en riesgo","evaluacion de riesgos"]],
+ 2:["Coordinación",["cooperacion","coordinacion nacional"]],
+ 3:["Lavado",["delito de lavado","LA"]],
+ 4:["Decomiso",["medidas provisionales"]],
+ 5:["FT",["delito FT","financiamiento del terrorismo"]],
+ 6:["SFD terrorismo",["sanciones terrorismo","SFD FT","SFD terrorismo"]],
+ 7:["SFD proliferación",["proliferacion","sanciones proliferacion","SFD FP"]],
+ 8:["OSFL",["sin fines de lucro","organizaciones sin fines de lucro"]],
+ 9:["Secreto",[]],
+ 10:["DDC",["debida diligencia"]],
+ 11:["Registros",[]],
+ 12:["PEP",["PEPs","PPE"]],
+ 13:["Corresponsal",["banca corresponsal"]],
+ 14:["Remesas",["STDV","transferencia de dinero"]],
+ 15:["Nuevas tecnologías",["tecnologias"]],
+ 16:["Transparencia de pagos",["pagos"],{"transferencias":"!Ya no. En dic-2025 la R.16 se llama «Transparencia de pagos». «Transferencias» te confunde con la R.14.","transferencias electronicas":"!Ese era el nombre anterior. En dic-2025 es «Transparencia de pagos»."}],
+ 17:["Terceros",[]],
+ 18:["Controles",["controles internos"]],
+ 19:["Países",["paises de mayor riesgo"]],
+ 20:["ROS",["reporte"]],
+ 21:["Tipping",["tipping off","revelacion"]],
+ 22:["APNFD DDC",["APNFD debida diligencia"],{"apnfd":"Vale, pero la R.23 también es APNFD. Agrega «DDC» para distinguirla."}],
+ 23:["APNFD otras",["otras medidas","APNFD otras medidas","medidas adicionales APNFD"],{"apnfd":"Vale, pero la R.22 también es APNFD. Agrega «otras» para distinguirla."}],
+ 24:["Personas jurídicas",["juridicas"]],
+ 25:["Estructuras jurídicas",["estructuras","otras estructuras"]],
+ 26:["Supervisión IF",["super IF","supervision instituciones financieras"],{"sup bco":"!Ojo: la R.26 no es sólo bancos, es de todas las instituciones financieras.","super bco":"!Ojo: la R.26 no es sólo bancos, es de todas las instituciones financieras."}],
+ 27:["Facultades supervisores",["facultades de los supervisores"],{"facultades":"Vale, pero la R.31 también es «Facultades». Di de quién: de los supervisores."}],
+ 28:["Supervisión APNFD",["super APNFD","sup APNFD"]],
+ 29:["UIF",["inteligencia financiera"]],
+ 30:["Orden público",["responsabilidades orden publico"],{"policia":"La idea es esa, pero el nombre dice «autoridades de orden público e investigativas»."}],
+ 31:["Facultades orden público",["facultades OP","facultades autoridades"],{"facultades":"Vale, pero la R.27 también es «Facultades». Di de quién: de orden público."}],
+ 32:["Transporte de efectivo",["transporte","transporte dinero","efectivo"]],
+ 33:["Estadísticas",[]],
+ 34:["Guía",["guias","retroalimentacion"]],
+ 35:["Sanciones",[]],
+ 36:["Instrumentos",["instrumentos internacionales"],{"tratados":"La idea es esa, pero el nombre dice «Instrumentos internacionales»."}],
+ 37:["Asistencia legal",["asistencia legal mutua"]],
+ 38:["Congelamiento y decomiso",["congelamiento"],{"decomiso y bloqueo":"!El GAFI no dice «bloqueo»: dice «congelamiento y decomiso».","decomiso":"Vale, pero la R.4 también es «Decomiso». La 38 es «Asistencia legal mutua: congelamiento y decomiso»."}],
+ 39:["Extradición",[]],
+ 40:["Otras formas",["otras formas de cooperacion","otras cooperacion","otras coop"]]
+};
+R.forEach(r=>{const n=+r.k.slice(2);const [w,a,wa]=KW[n];r.w=w;r.alts=a;r.warns=wa||{};});
+
+/* Módulo 3: tus palabras, cotejadas por el coordinador del M3 (Cotejo palabras M3 · v1, 13-oct) contra los Lineamientos del Informe de Auditoría (DOF 18-oct-2021) y el Reglamento de Supervisión de la CNBV. */
+const LIA="Lineamientos · Octavo A";
+const M3=[
+ {id:"m3-fr",n:"M3 · Fracciones I a XIV",sub:"Lineamientos",palabra:true,items:[
+  ["I","Identificación","De las políticas de identificación del Cliente o Usuario"],
+  ["II","Metodología","De la elaboración de una metodología con enfoque basado en riesgos"],
+  ["III","Conocimiento","De las políticas de conocimiento del Cliente o Usuario"],
+  ["IV","Reportes","De la presentación de los reportes de Operaciones a la Secretaría por conducto de la Comisión"],
+  ["V","Estructura","De la integración de las estructuras internas",["estructuras internas"]],
+  ["VI","Capacitación","De la capacitación y difusión",["capacitacion y difusion"]],
+  ["VII","Sistemas","De la Infraestructura Tecnológica",["infraestructura tecnologica","infraestructura"]],
+  ["VIII","Empleados","En relación con los empleados que laboren en áreas de atención al público o de administración de recursos",["empleados atencion"]],
+  ["IX","Conservación","De la conservación de la información"],
+  ["X","Listas","De las listas"],
+  ["XI","Intercambio","Del intercambio de información"],
+  ["XII","Novedosos","De los Modelos Novedosos",["modelos novedosos"]],
+  ["XIII","Otra","De otra información",["otra informacion"]],
+  ["XIV","Comisionistas","De los comisionistas a que se refieren las Disposiciones",[],{"comision":"!Es «Comisionistas». «La Comisión» es la CNBV, que aparece en la fr. IV."}]
+ ].map(([k,w,t,alts,warns])=>({k:"Fr. "+k,w,t,g:LIA+" · fracciones",alts:alts||[],warns:warns||{}}))},
+ {id:"m3-inc",n:"M3 · Incisos a) a k)",sub:"Octavo A, fr. III",palabra:true,items:[
+  ["a","Manual","Base","Cuenta con el Manual de Cumplimiento con los criterios, medidas y procedimientos para el debido conocimiento del Cliente o Usuario."],
+  ["b","Perfil transaccional","Conocer","Criterios, medidas y procedimientos para determinar el perfil y el comportamiento transaccional del Cliente o Usuario.",["perfil"]],
+  ["c","Grado de riesgo","Conocer","Modelo de evaluación de Riesgos para determinar el Grado de Riesgo de los Clientes o Usuarios."],
+  ["d","Alertas","Vigilar","Sistema de alertas para detectar oportunamente cambios en el comportamiento transaccional.",["sistema de alertas"]],
+  ["e","Monitoreo alto riesgo","Vigilar","Supervisión del comportamiento transaccional de Clientes o Usuarios de Grado de Riesgo alto.",["monitoreo"]],
+  ["f","PEPs","PEP","Criterios, medidas y procedimientos para Clientes o Usuarios Personas Políticamente Expuestas.",["PEP","PPE"]],
+  ["g","PEPs alto riesgo","Operaciones aprobadas","Operaciones con PEP de Grado de Riesgo alto, aprobadas conforme a las Disposiciones.",["PEP alto riesgo","PEP alto"]],
+  ["h","Alto riesgo","Operaciones aprobadas","Operaciones que pudieran generar un alto Riesgo para el propio Sujeto Supervisado, aprobadas conforme a las Disposiciones."],
+  ["i","Propietario real","Detectar","Políticas y procedimientos para identificar al Propietario Real de los recursos y al beneficiario de estos."],
+  ["j","Sujetos Supervisados","Detectar","Número, monto y frecuencia de Operaciones con Sujetos Supervisados que tengan la calidad de Cliente o Usuario.",["suj sup"],{"supervisada":"!Es «Sujetos Supervisados». «Entidad Supervisada» es del Reglamento de Supervisión: te cruza dos normas."}],
+  ["k","Listas","Detectar","Identificar a Clientes o Usuarios en la Lista de Personas Bloqueadas, a terceros que actúen por ellos y sus Operaciones.",["bloqueadas","personas bloqueadas"]]
+ ].map(([k,w,g,t,alts,warns])=>({k:k+")",w,t,g:"Octavo A, fr. III · "+g,alts:alts||[],warns:warns||{}}))},
+ {id:"m3-tit",n:"M3 · Títulos I a X",sub:"Reglamento de Supervisión",palabra:true,items:[
+  ["I","Definiciones","De las Disposiciones Generales","1",["disposiciones generales"]],
+  ["II","Visita","De la Inspección","4",["inspeccion"]],
+  ["III","Vigilancia","De la Vigilancia","43"],
+  ["IV","Observaciones y correctivas","De las Observaciones y Medidas Correctivas derivadas de la Inspección y Vigilancia","49",["observaciones","medidas correctivas","observaciones y medidas correctivas"],{"p y c":"!Es «Observaciones y Medidas Correctivas». Nacen de la inspección y la vigilancia, pero viven en el Título IV."}],
+  ["V","Comparecencia","De la Comparecencia","55"],
+  ["VI","Sanción","Del Emplazamiento para la Imposición de Sanciones","62",["sanciones","emplazamiento"]],
+  ["VII","Internacional","De la Inspección, Vigilancia, Cooperación y Asistencia Internacional","66",["cooperacion internacional"]],
+  ["VIII","Intervención","De la Intervención","81"],
+  ["IX","Liquidación","De las facultades de la Comisión respecto de Entidades Supervisadas en liquidación o concurso mercantil","97",["concurso mercantil"]],
+  ["X","Clausura","De la Clausura","101"]
+ ].map(([k,w,t,art,alts,warns])=>({k:"Tít. "+k,w,t:"Título "+k+" · "+t+" · empieza en el art. "+art,g:"Reglamento de Supervisión · títulos",alts:alts||[],warns:warns||{}}))}
+];
+
+const DECKS=[
+ {id:"r9-23",n:"R.9 a R.23",sub:"Medidas preventivas",items:rng(9,23)},
+ {id:"r26-35",n:"R.26 a R.35",sub:"Autoridades",items:rng(26,35)},
+ {id:"r1-40",n:"R.1 a R.40",sub:"Las 40",items:R},
+ ...M3
+];
+
+
+const $=s=>document.querySelector(s);
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let mode="palabra", deck=DECKS[0], level=3, list=[], checked=false, round=1;
+
+function norm(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\*/g,"").replace(/[^a-z0-9 ]+/g," ").replace(/\s+/g," ").trim()}
+function lev(a,b){const m=a.length,n=b.length;if(Math.abs(m-n)>1)return 2;const d=Array.from({length:m+1},(_,x)=>[x]);for(let y=1;y<=n;y++)d[0][y]=y;
+  for(let x=1;x<=m;x++)for(let y=1;y<=n;y++)d[x][y]=Math.min(d[x-1][y]+1,d[x][y-1]+1,d[x-1][y-1]+(a[x-1]===b[y-1]?0:1));return d[m][n]}
+function wordsMatch(typed,target){const tw=norm(typed).split(" ").filter(Boolean),vw=norm(target).split(" ");
+  if(tw.length!==vw.length)return null; let near=false;
+  for(let j=0;j<vw.length;j++){if(vw[j]===tw[j])continue; if(vw[j].length>=5&&lev(vw[j],tw[j])<=1){near=true;continue} return null}
+  return near?"near":"ok"}
+function variants(c){const v=[c.t].concat(c.alt?[c.alt]:[],c.alts||[]); v.slice().forEach(x=>{if(/\(.*\)/.test(x))v.push(x.replace(/\s*\([^)]*\)\s*/g," "))}); return v}
+/* ok | near (ortografía) | warn (vale, con aviso) | bad (con o sin aviso) | empty */
+function grade(typed,c){
+  if(!norm(typed))return {s:"empty"};
+  for(const [w,msg] of Object.entries(c.warns||{})){ if(wordsMatch(typed,w)){ return msg.startsWith("!")?{s:"bad",msg:msg.slice(1)}:{s:"warn",msg} } }
+  let best=null; for(const v of variants(c)){const r=wordsMatch(typed,v); if(r==="ok")return {s:"ok"}; if(r==="near")best={s:"near"}}
+  return best||{s:"bad"};
+}
+function hint(t){return t.split(/\s+/).map(w=>w.length<=2?w:w[0]+"·".repeat(Math.min(w.length-1,12))).join("  ")}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function cards(items){return items.map(x=>mode==="palabra"?{k:x.k,g:x.g,t:x.w,alts:x.alts,warns:x.warns,full:x.t,dud:x.dud}:{k:x.k,g:x.g,t:x.t,alt:x.alt,alts:[],warns:{}})}
+
+function chipRow(id,opts,cur,onPick){const box=$(id);box.innerHTML="";opts.forEach(o=>{const b=document.createElement("button");b.className="chip";b.type="button";
+  b.setAttribute("aria-pressed",String(o.v===cur));b.innerHTML=o.html;b.disabled=!!o.off;b.onclick=()=>onPick(o.v);box.appendChild(b)})}
+function renderControls(){
+  chipRow("#decks",DECKS.map(d=>({v:d,html:esc(d.n)+"<small>"+d.items.length+"</small>"})),deck,v=>{deck=v;if(deck.palabra)mode="palabra";newRound()});
+  chipRow("#levels",[{v:1,html:"Calcar"},{v:2,html:"Primera letra"},{v:3,html:"Nada"}],level,v=>{level=v;newRound()});
+  chipRow("#modes",[{v:"palabra",html:"Una palabra"},{v:"nombre",html:"Nombre completo",off:!!deck.palabra}],mode,v=>{mode=v;newRound()});
+}
+function newRound(items){
+  renderControls(); round=items?round+1:1;
+  list=cards(items||deck.items); if($("#shuffle").checked)list.sort(()=>Math.random()-.5);
+  checked=false; renderSheet(); renderBar();
+}
+function renderSheet(){
+  let html="",lastG=null; const showG=level<3&&!$("#shuffle").checked;
+  list.forEach((c,ix)=>{
+    if(showG&&c.g!==lastG){html+=`<div class="sec">${esc(c.g)}</div>`;lastG=c.g}
+    const tr=level===1?esc(c.t):level===2?esc(hint(c.t)):"";
+    html+=`<div class="row" id="row${ix}"><span class="k">${esc(c.k)}${c.dud?"?":""}</span><div class="cell"><div class="field"><div class="trace" aria-hidden="true">${tr}</div>
+      <input class="inp" id="in${ix}" data-ix="${ix}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="${esc(c.k)}"></div><div class="res" id="res${ix}"></div></div></div>`;
+  });
+  $("#sheet").innerHTML=html;
+  const ins=[...document.querySelectorAll(".inp")];
+  ins.forEach((el,ix)=>{
+    el.addEventListener("input",()=>{const t=el.previousElementSibling; if(level===2)t.style.visibility=el.value?"hidden":"visible"});
+    el.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault(); if(checked)return; if(ix<ins.length-1)ins[ix+1].focus(); else checkAll()}});
+  });
+  if(ins[0])ins[0].focus({preventScroll:true});
+}
+function renderBar(res){
+  if(!res){$("#bar").innerHTML=`<span class="note">${list.length} por escribir${round>1?` · vuelta ${round} (sólo las falladas)`:""}</span><button class="btn" id="check">Revisar todo</button>`;$("#check").onclick=checkAll;return}
+  const {ok,n,miss}=res;
+  $("#bar").innerHTML=`<span><span class="score">${ok} / ${n}</span> <span class="note">bien</span></span><div class="actions">${miss.length?`<button class="btn" id="again">Repetir las ${miss.length} que fallé</button>`:""}<button class="btn ghost" id="restart">Otra vuelta completa</button></div>`;
+  if(miss.length)$("#again").onclick=()=>newRound(miss.map(c=>deck.items.find(x=>x.k===c.k)));
+  $("#restart").onclick=()=>newRound();
+}
+function checkAll(){
+  checked=true; let ok=0; const miss=[];
+  list.forEach((c,ix)=>{
+    const el=$("#in"+ix), r=grade(el.value,c), row=$("#row"+ix), out=$("#res"+ix);
+    el.readOnly=true; el.previousElementSibling.style.visibility="hidden";
+    const good=r.s==="ok"||r.s==="near"||r.s==="warn";
+    row.className="row "+(r.s==="ok"?"ok":good?"warn":"bad");
+    if(good)ok++; else miss.push(c);
+    const full=c.full&&mode==="palabra"&&norm(c.full)!==norm(c.t)?`<span class="full">${esc(c.full)}</span>`:"";
+    const mark=r.s==="ok"?"✓":r.s==="near"?"✓ ortografía:":r.s==="warn"?"✓ ojo:":r.s==="empty"?"✗ en blanco:":"✗";
+    out.innerHTML=`<span class="mark">${mark}</span>${r.s==="ok"?"":`<span class="ans">${esc(c.t)}</span>`}${full}${r.msg?`<span class="msg">${esc(r.msg)}</span>`:""}${c.alt&&!good?`<span class="msg">También vale: ${esc(c.alt)}</span>`:""}`;
+  });
+  const d=new Date().toLocaleDateString("es-MX",{day:"numeric",month:"short"});
+  if(round===1){const h=store.get("rep.hist",[]); h.unshift({d,deck:deck.n+(mode==="palabra"?"":" · nombre"),level,ok,n:list.length}); store.set("rep.hist",h.slice(0,30)); renderLog()}
+  renderBar({ok,n:list.length,miss});
+  $("#bar").scrollIntoView({block:"nearest"});
+}
+function renderLog(){
+  const h=store.get("rep.hist",[]); if(!h.length){$("#log").innerHTML="";return}
+  const lv={1:"Calcar",2:"Primera letra",3:"Nada"};
+  $("#log").innerHTML=`<h2>Tus últimas vueltas (primera pasada, en este navegador)</h2><div class="tblwrap"><table><thead><tr><th>Día</th><th>Serie</th><th>Ayuda</th><th>Bien</th></tr></thead><tbody>
+   ${h.slice(0,10).map(x=>`<tr><td>${esc(x.d)}</td><td>${esc(x.deck)}</td><td>${lv[x.level]||x.level}</td><td class="n">${x.ok} / ${x.n}</td></tr>`).join("")}</tbody></table></div>`;
+}
+$("#shuffle").addEventListener("change",()=>newRound());
+newRound(); renderLog();
+</script>
+</body>
+</html>
