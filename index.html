@@ -63,6 +63,34 @@ h1{font-family:var(--f-name);font-weight:600;font-size:clamp(24px,5vw,32px);line
 .lectura th,.lectura td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:top}
 .lectura th{color:var(--muted);font-weight:500}
 @media (max-width:520px){.lectura .duo{grid-template-columns:1fr}}
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.03em;border-radius:999px;padding:1px 8px;vertical-align:1px;white-space:nowrap}
+.tag.enr{background:var(--accent-soft);color:var(--accent)}
+.tag.clase{background:var(--warn-soft);color:var(--warn)}
+.plan{margin-top:10px;font-size:14px;background:var(--accent-soft);border-radius:10px;padding:10px 12px}
+.rubro{display:grid;gap:10px;padding-block:6px 14px;border-bottom:1px solid var(--line)}
+.rubro:last-child{border-bottom:0}
+.rt{font-family:var(--f-name);font-weight:600;font-size:17px}
+.regla{font-size:14.5px}
+.grp2{display:grid;gap:6px}
+.slots{display:flex;flex-wrap:wrap;gap:8px}
+.inp.sm{font-size:16px;padding:6px 9px;width:auto;flex:1 1 9em;min-width:0}
+.f-oki{border-color:var(--ok)!important;background:var(--ok-soft)!important}
+.f-badi{border-color:var(--bad)!important;background:var(--bad-soft)!important}
+.exlist{display:grid;gap:3px;flex-basis:100%;font-size:13.5px;color:var(--muted)}
+.ex b{color:var(--ink);font-weight:600}
+.lv{font-family:var(--f-num);font-size:13px;color:var(--accent);font-weight:500}
+.gancho{font-size:13.5px;background:var(--paper);border-radius:8px;padding:8px 10px;flex-basis:100%}
+.par{display:grid;gap:6px;padding-block:10px;border-bottom:1px solid var(--line)}
+.par:last-child{border-bottom:0}
+.pfl{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:8px}
+.pcell{display:grid;gap:3px;min-width:0}
+.plab{font-size:13px;color:var(--ink)}
+.pcell .inp.sm{width:100%}
+.msg2{flex-basis:100%;font-size:13.5px}
+.oral{display:grid;gap:6px;padding-block:10px;border-bottom:1px solid var(--line)}
+.oral .rev{font-size:14px}
+.btn.sm{padding:6px 12px;font-size:13px;justify-self:start}
+@media (max-width:520px){.pfl{grid-template-columns:1fr}}
 .sheet{background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:18px 16px;display:grid;gap:4px;min-width:0}
 .sec{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:12px 0 4px}
 .sec:first-child{padding-top:0}
@@ -455,6 +483,148 @@ const FT_LECTURA=`
 <ol><li>¿Hay <b>dinero o recursos</b> y la persona <b>sabe</b> que van para terroristas o para un delito de la lista? → <b>FT</b>.</li><li>¿Es el <b>acto violento</b> mismo? → <b>terrorismo</b>.</li><li>¿Esconde a alguien? → <b>encubrimiento</b>: si escondió a un terrorista, 139 Bis; si escondió a quien financió, 139 Quinquies.</li><li>¿La pregunta es <b>de dónde viene</b> el dinero? → <b>lavado</b>.</li></ol>
 <p class="nota">Fuentes: CPF, última reforma DOF 13-03-2026, arts. 139 a 139 Quinquies, 148 Bis a 148 Quáter y 400 Bis; GAFI, Recomendaciones dic-2025 (GAFILAT): R.5, pág. 12, y su Nota Interpretativa, párrs. 5 y 6, pág. 47. La regla «nacional y FT = UMA», los delatores y las cuatro preguntas son criterio didáctico de 360Educa.</p>`;
 
+/* ENR 2023 · refuerzo («Práctica diaria · ENR refuerzo v1», coordinador del M3, 17-oct). Niveles: los de ENR_RAW (sin cambios, sólo 2023). Cada regla o gancho lleva su etiqueta: ENR (lo dice la ENR, con apartado) o Clase (gancho de 360Educa). */
+const ENR_ALL={};
+[["1","f"],["2","sf"],["3","av"],["4","rf"]].forEach(([n,u])=>ENR_RAW[n].forEach(([clave,w,alt,t])=>{
+  const m=n==="1"?clave.match(/^(F\d+) (.+)$/):clave.match(/^(.+?) · (.+)$/);
+  const id=n==="1"?m[1]:u+":"+m[2]; ENR_ALL[id]={id,u,k:n==="1"?m[1]:m[2],nom:n==="1"?m[2]:m[2],lvl:w,lvlTxt:alt,oficial:t};}));
+const nE=s=>s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9 ]+/g," ").replace(/\s+/g," ").trim();
+const EXTRA_ALIAS={"sf:BM-G7":["g7","bm g7","banca multiple g7"],"sf:BM-Cambiarios":["bm cambiarios","banca cambiaria","banca multiple cambiarios","bancos cambiarios"],
+ "sf:SOFOM no reguladas":["sofom no regulada","sofomes no reguladas","no reguladas","enr"],"sf:Almacenes":["almacenes generales","almacenes generales de deposito"],
+ "av:Joyas y metales":["joyas","metales","metales preciosos","relojes","piedras"],"av:Monederos":["monederos","certificados"],"av:Tarjetas prepagadas":["prepagadas","vales","cupones"],
+ "av:Mutuo":["mutuo","prestamos","creditos"],"av:Fe pública":["fe publica","notarios","notario"],"av:Servidores públicos":["servidores","servidores publicos"]};
+function aliasIndex(universe){const idx={},cnt={};
+  universe.forEach(e=>{const words=nE(e.nom).split(" ").filter(w=>w.length>=4);words.forEach(w=>cnt[w]=(cnt[w]||0)+1)});
+  universe.forEach(e=>{const al=new Set([nE(e.nom),nE(e.k)]);
+    if(e.u==="f"){al.add(e.k.slice(1));al.add("f "+e.k.slice(1));}
+    nE(e.nom).split(" ").filter(w=>w.length>=4&&cnt[w]===1).forEach(w=>al.add(w));
+    (EXTRA_ALIAS[e.id]||[]).forEach(a=>al.add(nE(a)));
+    al.forEach(a=>{if(!a)return; idx[a]=idx[a]&&idx[a]!==e.id?"__amb":e.id})});
+  return idx}
+/* Porqué de cada excepción: [texto, etiqueta] */
+const POR={
+ F1:["La reforma a la LFPIORPI presentada en el Senado el 7-feb-2019 sigue sin aprobarse; no aprobar leyes del régimen es, en sí mismo, un factor de riesgo.","ENR VI.1"],
+ F2:["La SHCP emite las DCG con opinión de la UIF y los supervisores, y la LIC se reformó en 2022 (garantía de audiencia de la Lista de Personas Bloqueadas). Es el único BB de toda la ENR.","ENR VI.2"],
+ F4:["Los layouts cumplen estándares; sólo falla el campo «cuenta», que se llena con cosas distintas.","ENR VI.4"],
+ F5:["El EBR es obligatorio en el SF desde la reforma a las DCG de 2017 (F5 MB). En AV sólo hay medidas simplificadas para clientes de bajo riesgo (F6 MM).","ENR VI.5–VI.6"],
+ F7:["La CNBV tiene un EBR «altamente desarrollado» (F7 MB); el SAT apenas pasó de 2 a 5 indicadores (F8 MM).","ENR VI.7–VI.8"],
+ F18:["Control del Estado: las adquisiciones públicas.","ENR VII.18"],
+ F23:["Control del Estado: la aduana, donde el lavado entra por facturas y documentos alterados, TBML y SBML.","ENR VII.23"],
+ F24:["Control del Estado: los tribunales, cuyas tesis limitan el bloqueo de cuentas de la UIF.","ENR VII.24"],
+ F21:["El SPEI y las infraestructuras están reguladas o supervisadas por BANXICO; la ENR lo llama «factor controlado».","ENR VII.21"],
+ F26:["No hay indicios de organizaciones terroristas en el país: los casos han sido aislados, retóricos y aspiracionales. Por eso la ocurrencia es B.","ENR VIII.26"],
+ F28:["Grave si pasa, pero no ha pasado: ocurrencia B, como todas las amenazas de FT.","ENR VIII.26–VIII.27"],
+ F27:["Es la única amenaza de FT con impacto Medio. No se ha identificado una operación asociada al FT.","ENR XI.4 · VIII.27"],
+ F29:["Más de 3,000 km de frontera y cerca del 90 % de los migrantes irregulares que van a EE. UU. cruzan México.","ENR VIII.29"],
+ F31:["En la matriz de la UIF, 5,957 OSFL salen en riesgo bajo.","ENR VIII.31"],
+ F34:["El principal riesgo es el desvío de insumos de uso dual desde la industria civil (por eso la ocurrencia sube a M).","ENR IX.34"],
+ F36:["Según la FGR, el ransomware creció cerca de 400 % en 2021.","ENR X.36"],
+ F37:["La pandemia aceleró el fraude y el delito cibernético.","ENR X.37"]
+};
+const EXC={
+ "enr-x-f":{uni:"f",rubros:[
+  {t:"Régimen (F1–F12)",regla:"Todo es MM. Cuando el SF y las AV tienen factor gemelo y difieren, el SF queda más abajo.",tag:"Clase",groups:[{lab:"Excepciones",ids:["F1","F2","F4","F5","F7"]}]},
+  {t:"Lavado (F13–F25)",regla:"Amenazas: las 3 son AA. Vulnerabilidades: lo que depende del Estado es A, lo que depende del mercado es MM y lo que controla BANXICO es MB.",tag:"Clase",groups:[
+    {lab:"Estado · AA",ids:["F18","F23","F24"]},{lab:"Estado a medias · AM",ids:["F16"]},{lab:"BANXICO · MB",ids:["F21"]},{lab:"Mercado · MM",ids:["F17","F19","F20","F22","F25"]}]},
+  {t:"Terrorismo (F26–F31)",regla:"Amenazas: «grave si pasa, pero no pasa»; la ocurrencia siempre es B.",tag:"Clase",groups:[
+    {lab:"Amenaza con impacto Medio",ids:["F27"]},{lab:"Vulnerabilidad · AA",ids:["F29"]},{lab:"Vulnerabilidad · MM",ids:["F30"]},{lab:"Vulnerabilidad · MB",ids:["F31"]}]},
+  {t:"FPADM (F32–F34)",regla:"Impacto siempre A; ocurrencia B.",tag:"Clase",groups:[{lab:"Excepción",ids:["F34"]}]},
+  {t:"Emergentes (F35–F37)",regla:"El que está pasando hoy es el más alto.",tag:"Clase",groups:[{lab:"AA",ids:["F36"]},{lab:"AM",ids:["F35"]},{lab:"MM",ids:["F37"]}]}]},
+ "enr-x-sf":{uni:"sf",rubros:[{t:"Sectores del sistema financiero (23)",regla:"El nivel normal es MEDIO (12 de 23). Escribe sólo los 11 que no lo son.",tag:"Clase",groups:[
+   {lab:"ALTO",ids:["sf:BM-G7","sf:BM-Cambiarios"],gancho:"«Lo grande y lo cambiario, dentro del banco». Casas de cambio y centros cambiarios quedaron en MEDIO.",tag:"Clase"},
+   {lab:"MEDIO-BAJO",ids:["sf:Uniones de crédito","sf:SOFI","sf:Almacenes","sf:SOFOM no reguladas","sf:SODAFI"],gancho:"«U-S-A-S-S»: Uniones, SOFI, Almacenes, SOFOM no reguladas, SODAFI.",tag:"Clase"},
+   {lab:"BAJO",ids:["sf:Afores","sf:Seguros","sf:Fianzas","sf:Asesores de inversión"],gancho:"«El dinero que se queda guardado»: retiro, pólizas y garantías.",tag:"Clase"}],
+   nota:["La matriz del SF combinó ROR, ROI y ROIP de 2019 al primer semestre de 2022 con informes de calidad sectorial y cuestionarios de percepción. No explica sector por sector por qué quedó en su nivel; por eso los ganchos son de clase.","ENR IV.1"]}]},
+ "enr-x-av":{uni:"av",rubros:[{t:"Sectores de actividades vulnerables (18)",regla:"El nivel normal es MEDIO-BAJO (10 de 18) y ninguno quedó en BAJO. Escribe sólo los 8 que no lo son.",tag:"Clase",groups:[
+   {lab:"ALTO",ids:["av:Obras de arte","av:Joyas y metales","av:Monederos"],gancho:"La matriz de AV pesa sobre todo la alta liquidez, que pueda transferir valor y que permita anonimato. Los tres guardan mucho valor en poco espacio y se mueven fácil.",tag:"ENR IV.2"},
+   {lab:"MEDIO",ids:["av:Tarjetas prepagadas","av:Vehículos","av:Servidores públicos","av:Fe pública","av:Mutuo"],gancho:"«Con una tarjeta prepagada pagué el vehículo; el servidor público firmó, el notario dio fe pública y el resto me lo prestaron (mutuo)».",tag:"Clase"}]}]}
+};
+const PARES=[
+ {d:"La regulada sube un nivel (pregunta 150 de tu simulador).",tag:"Clase",p:[["SOFOM reguladas","sf:SOFOM reguladas"],["SOFOM no reguladas","sf:SOFOM no reguladas"]]},
+ {d:"El mercado contra el Estado (pregunta 151 de tu simulador).",tag:"Clase",p:[["F25 ITF","F25"],["F18 Contratación pública","F18"]]},
+ {d:"El SF está un paso abajo; las AV siguen sin reforma.",tag:"ENR VI.1–VI.2",p:[["F1 Marco jurídico AV","F1"],["F2 Marco jurídico SF","F2"]]},
+ {d:"En el SF el EBR es obligatorio desde 2017.",tag:"ENR VI.5–VI.6",p:[["F5 EBR SO del SF","F5"],["F6 EBR SO de AV","F6"]]},
+ {d:"CNBV contra SAT.",tag:"ENR VI.7–VI.8",p:[["F7 Supervisores SF","F7"],["F8 Supervisores AV","F8"]]},
+ {d:"Lo cambiario en ALTO es el subsector bancario.",tag:"Clase",p:[["BM-Cambiarios","sf:BM-Cambiarios"],["Casas de cambio","sf:Casas de cambio"],["Centros cambiarios","sf:Centros cambiarios"]]},
+ {d:"Las dos son vulnerabilidades de LD; sólo la segunda llega a AA.",tag:"ENR XI.3",p:[["F16 Cultura constitucional","F16"],["F18 Contratación pública","F18"]]},
+ {d:"Mismo nivel y distinto rubro: la frontera terrestre es FT; el puerto es LD.",tag:"ENR XI.3–XI.4",p:[["F29 Fronteras (FT)","F29"],["F23 Puertos (LD)","F23"]]},
+ {d:"Tres mediciones distintas del mismo tema.",tag:"ENR XI",p:[["Activos virtuales · factor F35","F35"],["Activos virtuales · sector de AV","av:Activos virtuales (AV)"],["Activos virtuales · riesgo final","rf:Activos virtuales"]]},
+ {d:"El nivel del factor no es el riesgo final.",tag:"ENR XI.6–XI.7",p:[["Ransomware · factor F36","F36"],["Ransomware · riesgo final","rf:Ransomware"]]},
+ {d:"Ídem: el factor no es el riesgo final.",tag:"ENR XI.6–XI.7",p:[["COVID-19 · factor F37","F37"],["COVID-19 · riesgo final","rf:COVID-19"]]}
+];
+const HISTORIA=`<p>México se revisó a sí mismo y encontró <b>37 problemas</b>: 12 en casa, 13 de lavado, 6 de terrorismo, 3 de armas y 3 nuevos.</p>
+<p><b>En casa</b> casi todo es regular (MM). Pero el sistema financiero está mejor que las actividades vulnerables: su ley es la única en Bajo/Bajo, tiene EBR obligatorio y lo supervisa una CNBV madura. Las AV siguen esperando la reforma a la LFPIORPI.</p>
+<p><b>En el lavado</b>, los tres enemigos están al máximo: el crimen organizado, el dinero ilícito y la corrupción. El dinero se cuela por donde el <b>Estado</b> controla mal: compras públicas, aduanas y tribunales. El mercado (efectivo, dólares, informalidad, comercio electrónico, ITF) está en regular. Lo que vigila BANXICO está controlado.</p>
+<p><b>El terrorismo</b> sería gravísimo, pero no ha pasado: por eso su ocurrencia es baja. Lo único en máximo es la frontera, que es enorme y porosa. <b>Las armas</b>, igual: grave si pasa, pero poco probable, salvo el desvío de insumos de uso dual.</p>
+<p><b>Lo nuevo:</b> el ransomware está explotando (AA); los activos virtuales preocupan (AM); el COVID ya va de salida (MM).</p>
+<p><b>El veredicto:</b> sólo el lavado queda en <b>Medio-Alto</b>, porque sus amenazas pesan 0.8 y están al máximo <span class="tag enr">ENR XI.7</span>. Activos virtuales y ransomware, <b>Medio</b>. Terrorismo, armas y COVID, <b>Bajo</b>.</p>
+<p><b>En los sectores</b>, el banco grande y el banco cambiario están en ALTO; casi todo el sistema financiero, en MEDIO; lo que guarda dinero a largo plazo, en BAJO. En las AV manda lo que guarda mucho valor en poco espacio (arte, joyas, monederos) y casi todo lo demás está en MEDIO-BAJO.</p>
+<p class="nota"><span class="tag clase">Clase</span> Historia armada sólo con datos de la ENR 2023. La frase del 0.8 es la ecuación de XI.7; no se pregunta como fórmula.</p>`;
+const DIAS=["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+const PLAN={0:"«¿Por qué?» oral y luego las cuatro series en desorden",1:"Reglas · 37 factores",2:"Reglas · 37 factores",3:"Reglas · sectores SF",4:"Reglas · sectores AV",5:"Las cuatro series completas con ayuda «Nada»",6:"Las cuatro series completas con ayuda «Nada»"};
+function enrLectura(){const d=new Date().getDay();
+  return `<div class="plan"><b>Hoy, ${DIAS[d]}:</b> 1) la historia en voz alta · 2) ${PLAN[d]} · 3) Pares que confunden. <span class="nota">Unos 15 minutos.</span></div>
+  <details class="lectura" open><summary>La historia de la ENR en 60 segundos · léela en voz alta</summary>${HISTORIA}</details>`}
+const tagHtml=t=>`<span class="tag ${t==="Clase"?"clase":"enr"}">${esc(t)}</span>`;
+const ENRREF=[
+ {id:"enr-x-f",n:"Reglas · 37 factores",kind:"exc",palabra:true,count:23,items:[1]},
+ {id:"enr-x-sf",n:"Reglas · sectores SF",kind:"exc",palabra:true,count:11,items:[1]},
+ {id:"enr-x-av",n:"Reglas · sectores AV",kind:"exc",palabra:true,count:8,items:[1]},
+ {id:"enr-pares",n:"Pares que confunden",kind:"pares",palabra:true,items:PARES},
+ {id:"enr-por",n:"¿Por qué? (oral)",kind:"oral",palabra:true,count:5,items:Object.keys(POR)}
+];
+/* ---- actividades especiales ---- */
+let spState=null;
+function renderSpecial(){const k=deck.kind; $("#bar").innerHTML="";
+  if(k==="exc")return renderExc(); if(k==="pares")return renderPares(); if(k==="oral")return renderOral();}
+function renderExc(){const X=EXC[deck.id]; let h="",n=0;
+  X.rubros.forEach((r,ri)=>{h+=`<div class="rubro"><div class="rt">${esc(r.t)}</div><div class="regla">${tagHtml(r.tag)} ${esc(r.regla)}</div>`;
+    r.groups.forEach((g,gi)=>{h+=`<div class="grp2"><span class="lab">${esc(g.lab)} · ${g.ids.length}</span><div class="slots">`;
+      g.ids.forEach((_,si)=>{h+=`<input class="inp sm" id="x${ri}_${gi}_${si}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="${esc(g.lab)} ${si+1}">`;n++});
+      h+=`</div><div class="res" id="xr${ri}_${gi}"></div></div>`});
+    h+=`</div>`});
+  $("#sheet").innerHTML=h;
+  $("#bar").innerHTML=`<span class="note">${n} por escribir · una palabra o el número del factor</span><button class="btn" id="check">Revisar todo</button>`;
+  $("#check").onclick=checkExc; wireEnter(checkExc);}
+function wireEnter(fn){const ins=[...document.querySelectorAll("#sheet .inp")];ins.forEach((el,i)=>el.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();if(i<ins.length-1)ins[i+1].focus();else fn()}}));if(ins[0])ins[0].focus({preventScroll:true})}
+function lineFor(id){const e=ENR_ALL[id];const por=POR[id];
+  return `<div class="ex"><b>${esc(e.k)}${e.u==="f"?" · "+esc(e.nom):""}</b> <span class="lv">${esc(e.lvl)}</span>${por?` — ${esc(por[0])} ${tagHtml(por[1])}`:""}</div>`}
+function checkExc(){const X=EXC[deck.id]; const uni=Object.values(ENR_ALL).filter(e=>e.u===X.uni); const idx=aliasIndex(uni); let ok=0,n=0;
+  X.rubros.forEach((r,ri)=>r.groups.forEach((g,gi)=>{const got=new Set(); const bad=[]; const amb=[];
+    g.ids.forEach((_,si)=>{const el=$(`#x${ri}_${gi}_${si}`); el.readOnly=true; const v=nE(el.value); n++; if(!v){el.classList.add("f-badi");return}
+      const id=idx[v]; if(id==="__amb"){amb.push(el.value);el.classList.add("f-badi");return}
+      if(id&&g.ids.includes(id)&&!got.has(id)){got.add(id);ok++;el.classList.add("f-oki")} else {el.classList.add("f-badi"); bad.push(el.value+(id&&id!=="__amb"?` (es ${ENR_ALL[id].k}${ENR_ALL[id].u==="f"?" "+ENR_ALL[id].nom:""}, ${ENR_ALL[id].lvl})`:""))}});
+    const miss=g.ids.filter(i=>!got.has(i));
+    $(`#xr${ri}_${gi}`).innerHTML=`<span class="mark">${miss.length?"✗":"✓"} ${got.size} de ${g.ids.length}</span>`+
+      (amb.length?`<span class="msg">«${esc(amb.join("», «"))}» se parece a más de uno: escribe el número o una palabra más precisa.</span>`:"")+
+      (bad.length?`<span class="msg">No va aquí: ${esc(bad.join("; "))}.</span>`:"")+
+      `<div class="exlist">${g.ids.map(lineFor).join("")}</div>`+(g.gancho?`<div class="gancho">${tagHtml(g.tag)} ${esc(g.gancho)}</div>`:"");
+  }));
+  X.rubros.forEach(r=>{if(r.nota)$("#sheet").insertAdjacentHTML("beforeend",`<div class="gancho">${tagHtml(r.nota[1])} ${esc(r.nota[0])}</div>`)});
+  logScore(ok,n); $("#bar").innerHTML=`<span><span class="score">${ok} / ${n}</span> <span class="note">bien</span></span><div class="actions"><button class="btn ghost" id="restart">Otra vuelta</button></div>`; $("#restart").onclick=()=>newRound();}
+function lvlOk(typed,id){const e=ENR_ALL[id]; const t=normLvl(typed); if(!t)return {s:"empty"};
+  if(t===normLvl(e.lvl)||t===normLvl(e.lvlTxt))return {s:"ok"};
+  if(e.u==="f"&&t===normLvl(e.lvl.split("").join("-")))return {s:"bad",msg:"En un factor van dos letras sin guion."};
+  if(e.u!=="f"&&e.lvl.includes("-")&&t===normLvl(e.lvl.replace("-","")))return {s:"bad",msg:"En un sector o riesgo final, el compuesto lleva guion (M-B, M-A)."};
+  return {s:"bad"}}
+function renderPares(){let h=""; PARES.forEach((r,i)=>{h+=`<div class="par" id="pr${i}"><div class="pfl" style="--n:${r.p.length}">`;
+  r.p.forEach(([lab,id],j)=>{h+=`<label class="pcell"><span class="plab">${esc(lab)}</span><input class="inp sm" id="p${i}_${j}" autocomplete="off" autocapitalize="off" spellcheck="false"></label>`});
+  h+=`</div><div class="res" id="prr${i}"></div></div>`});
+  $("#sheet").innerHTML=h; $("#bar").innerHTML=`<span class="note">${PARES.length} pares · escribe el nivel de cada renglón (factor: AM; sector o riesgo: M-B)</span><button class="btn" id="check">Revisar todo</button>`;
+  $("#check").onclick=checkPares; wireEnter(checkPares);}
+function checkPares(){let ok=0;
+  PARES.forEach((r,i)=>{let all=true; const msgs=[];
+    r.p.forEach(([lab,id],j)=>{const el=$(`#p${i}_${j}`); el.readOnly=true; const g=lvlOk(el.value,id); const good=g.s==="ok"; if(!good)all=false; if(g.msg)msgs.push(g.msg); el.classList.add(good?"f-oki":"f-badi")});
+    if(all)ok++;
+    $(`#prr${i}`).innerHTML=`<span class="mark">${all?"✓":"✗"}</span><span class="ans">${r.p.map(([lab,id])=>esc(lab)+": "+esc(ENR_ALL[id].lvl)).join(" · ")}</span><span class="msg2">${tagHtml(r.tag)} ${esc(r.d)}</span>`+[...new Set(msgs)].map(m=>`<span class="msg">${esc(m)}</span>`).join("")});
+  logScore(ok,PARES.length); $("#bar").innerHTML=`<span><span class="score">${ok} / ${PARES.length}</span> <span class="note">pares completos</span></span><div class="actions"><button class="btn ghost" id="restart">Otra vuelta</button></div>`; $("#restart").onclick=()=>newRound();}
+function renderOral(){const ids=Object.keys(POR).sort(()=>Math.random()-.5).slice(0,5);
+  $("#sheet").innerHTML=`<p class="note">Di en voz alta el nivel <b>y</b> el porqué. Luego revela.</p>`+ids.map((id,i)=>{const e=ENR_ALL[id];
+    return `<div class="oral"><div class="pk"><span class="k">${esc(e.k)}</span><span class="nom">· ${esc(e.nom)}</span></div><button class="btn ghost sm" data-i="${i}">Revelar</button><div class="rev" id="or${i}" hidden><span class="lv">${esc(e.lvl)}</span> ${esc(e.lvlTxt)} — ${esc(POR[id][0])} ${tagHtml(POR[id][1])}</div></div>`}).join("");
+  $("#sheet").querySelectorAll("button[data-i]").forEach(b=>b.onclick=()=>{$("#or"+b.dataset.i).hidden=false;b.hidden=true});
+  $("#bar").innerHTML=`<span class="note">5 por día</span><button class="btn" id="otros">Otros 5</button>`; $("#otros").onclick=renderOral;}
+function logScore(ok,n){const d=new Date().toLocaleDateString("es-MX",{day:"numeric",month:"short"}); const h=store.get("rep.hist",[]); h.unshift({d,deck:"M3 · "+deck.n,level:"—",ok,n}); store.set("rep.hist",h.slice(0,30)); renderLog()}
+
 /* De qué módulo y documento es cada serie. */
 const DOCS={
  gafi:{mod:"Módulo 1",doc:"Las Recomendaciones del GAFI",ver:"Traducción al español de diciembre de 2025 (GAFILAT)"},
@@ -462,9 +632,9 @@ const DOCS={
  ley:{mod:"Módulo 2",doc:"LFPIORPI · artículo 17, actividades vulnerables",ver:"Texto vigente, última reforma DOF 16-07-2025"},
  lia:{mod:"Módulo 3",doc:"Lineamientos para la elaboración del Informe de Auditoría PLD/FT · Octavo A",ver:"DOF 18-oct-2021"},
  rs:{mod:"Módulo 3",doc:"Reglamento de Supervisión de la CNBV",ver:"Compilación CNBV con la reforma del 21-jul-2021"},
- enr:{mod:"Módulo 3",doc:"Evaluación Nacional de Riesgos 2023 · niveles de riesgo",ver:"SHCP-UIF, noviembre de 2023, apartado XI"}
+ enr:{mod:"Módulo 3",doc:"Evaluación Nacional de Riesgos 2023 · niveles de riesgo",ver:"SHCP-UIF, noviembre de 2023, apartado XI · sólo niveles 2023",lecturaHtml:enrLectura}
 };
-const DOC_DE={"r9-23":"gafi","r26-35":"gafi","r1-40":"gafi","ft-ld":"ft","ft-pz":"ft","ft-ls":"ft","ft-pn":"ft","ft-fu":"ft","m2-fr":"ley","m2-umb":"ley","m3-fr":"lia","m3-inc":"lia","m3-tit":"rs","enr-f":"enr","enr-sf":"enr","enr-av":"enr","enr-rf":"enr"};
+const DOC_DE={"r9-23":"gafi","r26-35":"gafi","r1-40":"gafi","ft-ld":"ft","ft-pz":"ft","ft-ls":"ft","ft-pn":"ft","ft-fu":"ft","m2-fr":"ley","m2-umb":"ley","m3-fr":"lia","m3-inc":"lia","m3-tit":"rs","enr-f":"enr","enr-sf":"enr","enr-av":"enr","enr-rf":"enr","enr-x-f":"enr","enr-x-sf":"enr","enr-x-av":"enr","enr-pares":"enr","enr-por":"enr"};
 const docOf=d=>DOCS[DOC_DE[d.id]];
 const DECKS=[
  {id:"r9-23",n:"R.9 a R.23",sub:"Medidas preventivas",items:rng(9,23)},
@@ -473,7 +643,8 @@ const DECKS=[
  ...FTD,
  ...M2,
  ...M3,
- ...ENR
+ ...ENR,
+ ...ENRREF
 ];
 
 
@@ -523,7 +694,7 @@ function renderControls(){
     grp.innerHTML=`<span class="dlab"><b>${esc(D.mod)}</b> · ${esc(D.doc)}</span><div class="chips"></div>`;
     const row=grp.querySelector(".chips");
     DECKS.filter(d=>DOC_DE[d.id]===key).forEach(d=>{const b=document.createElement("button");b.className="chip";b.type="button";
-      b.setAttribute("aria-pressed",String(d===deck));b.innerHTML=esc(d.n)+"<small>"+d.items.length+"</small>";
+      b.setAttribute("aria-pressed",String(d===deck));b.innerHTML=esc(d.n)+"<small>"+(d.count||d.items.length)+"</small>";
       b.onclick=()=>{deck=d;if(deck.palabra)mode="palabra";newRound()};row.appendChild(b)});
     box.appendChild(grp)});
   chipRow("#levels",[{v:1,html:"Calcar"},{v:2,html:"Primera letra"},{v:3,html:"Nada"}],level,v=>{level=v;newRound()});
@@ -531,7 +702,8 @@ function renderControls(){
 }
 function newRound(items){
   renderControls(); round=items?round+1:1;
-  {const D=docOf(deck); $("#doctitle").innerHTML=`<span class="eyebrow">${esc(D.mod)} · ${esc(deck.n)}</span><h2>${esc(D.doc)}</h2><span class="note">${esc(D.ver)}</span>`+(D.lectura?`<details class="lectura" ${items?"":"open"}><summary>Léelo primero · 5 minutos</summary>${D.lectura}</details>`:"");}
+  {const D=docOf(deck); $("#doctitle").innerHTML=`<span class="eyebrow">${esc(D.mod)} · ${esc(deck.n)}</span><h2>${esc(D.doc)}</h2><span class="note">${esc(D.ver)}</span>`+(D.lecturaHtml?D.lecturaHtml():"")+(D.lectura?`<details class="lectura" ${items?"":"open"}><summary>Léelo primero · 5 minutos</summary>${D.lectura}</details>`:"");}
+  if(deck.kind){checked=false;renderSpecial();return}
   list=cards(items||deck.items); if($("#shuffle").checked)list.sort(()=>Math.random()-.5);
   checked=false; renderSheet(); renderBar();
 }
