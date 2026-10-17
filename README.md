@@ -13,3 +13,4 @@ Un solo archivo, `index.html`, sin dependencias salvo Google Fonts. El historial
 ## Versiones
 - v4 (13-oct-2026): modo lista, palabras de Maribel, M3 cotejado.
 - v5 (13-oct-2026): Módulo 2 (art. 17 y umbrales, con avisos de los montos que cambió la reforma 2025).
+- v6 (17-oct-2026): nombre corto junto a cada clave de «M2 · Umbrales» (claves de la serie de umbrales · v2, coordinador del M2). Cifras sin cambio.

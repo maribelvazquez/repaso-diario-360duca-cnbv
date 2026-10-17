@@ -57,6 +57,11 @@ h1{font-family:var(--f-name);font-weight:600;font-size:clamp(24px,5vw,32px);line
 .row.ok .inp{border-color:var(--ok);background:var(--ok-soft)}
 .row.bad .inp{border-color:var(--bad);background:var(--bad-soft)}
 .row.warn .inp{border-color:var(--warn);background:var(--warn-soft)}
+.row.pair{grid-template-columns:minmax(0,1fr);padding-top:8px}
+.row.pair.head{padding-top:0}
+.pk{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline}
+.pk .k{padding-top:0}
+.pk .nom{font-size:14px;color:var(--ink)}
 .pairs{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:0}
 .row.head{padding-bottom:0}
 .row.ok .f-ok .inp,.f-ok .inp{border-color:var(--ok);background:var(--ok-soft)}
@@ -308,9 +313,11 @@ const U17=[
  ["Fr. XVI a)","siempre","210",{"645":"!Eso era antes. Desde 2025 el Aviso es desde 210 UMA por operación de cada cliente."},"Operación de cada Cliente o Usuario."],
  ["Fr. XVI b)","siempre","4",{},"Contraprestación por el servicio. Inciso nuevo en 2025."]
 ];
+/* Nombres cortos de la serie de umbrales: criterio 360Educa del coordinador del M2 («claves de la serie de umbrales · v2», 17-oct). */
+const U17N={"Fr. I": "Juegos y sorteos", "Fr. II a)": "Tarjetas de crédito", "Fr. II b)": "Tarjetas prepagadas", "Fr. II c)": "Valor monetario", "Fr. III": "Cheques de viajero", "Fr. IV": "Préstamos", "Fr. V": "Inmuebles", "Fr. V Bis": "Desarrollo inmobiliario", "Fr. VI": "Joyas y metales", "Fr. VII": "Obras de arte", "Fr. VIII": "Vehículos", "Fr. IX": "Blindaje", "Fr. X a)": "Traslado con monto", "Fr. X b)": "Traslado sin monto", "Fr. XI": "Profesionistas independientes", "Fr. XII A a)": "XII A = notarios · a) inmuebles", "Fr. XII A b)": "XII A = notarios · b) poderes", "Fr. XII A c)": "XII A = notarios · c) personas morales", "Fr. XII A d)": "XII A = notarios · d) fideicomisos", "Fr. XII A e)": "XII A = notarios · e) mutuo o crédito", "Fr. XII B a)": "XII B = corredores · a) avalúos", "Fr. XII B b)–d)": "XII B = corredores · b) sociedades · c) fideicomisos · d) mutuo", "Fr. XIII": "Donativos", "Fr. XIV a) b) c) f)": "Aduanas · a) vehículos · b) máquinas de juego · c) tarjetas de pago · f) blindaje", "Fr. XIV d)": "Aduanas: joyas", "Fr. XIV e)": "Aduanas: arte", "Fr. XV": "Arrendamiento", "Fr. XVI a)": "Activos virtuales: operación", "Fr. XVI b)": "Activos virtuales: comisión"};
 const M2=[
  {id:"m2-fr",n:"M2 · Art. 17 fracciones",sub:"LFPIORPI",palabra:true,items:FR17.map(([k,w,t,alts])=>({k:"Fr. "+k,w,t,g:LEY,alts:alts||[],warns:{}}))},
- {id:"m2-umb",n:"M2 · Umbrales",sub:"Identificación y Aviso",palabra:true,pair:true,items:U17.map(([k,i,a,warns,nota])=>({k,w:i,w2:a,t:nota||"",g:LEY+" · umbrales en veces la UMA",alts:[],warns:{},warns2:warns||{},num:true}))}
+ {id:"m2-umb",n:"M2 · Umbrales",sub:"Identificación y Aviso",palabra:true,pair:true,items:U17.map(([k,i,a,warns,nota])=>({k,nom:U17N[k],w:i,w2:a,t:nota||"",g:LEY+" · umbrales en veces la UMA",alts:[],warns:{},warns2:warns||{},num:true}))}
 ];
 
 const DECKS=[
@@ -345,7 +352,7 @@ function grade(typed,c){
 }
 function hint(t){return t.split(/\s+/).map(w=>w.length<=2?w:w[0]+"·".repeat(Math.min(w.length-1,12))).join("  ")}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
-function cards(items){return items.map(x=>x.w2!==undefined?{k:x.k,g:x.g,pair:true,num:true,full:x.t,parts:[{t:x.w,warns:{},num:true},{t:x.w2,warns:x.warns2,num:true}]}:mode==="palabra"?{k:x.k,g:x.g,t:x.w,alts:x.alts,warns:x.warns,full:x.t,dud:x.dud}:{k:x.k,g:x.g,t:x.t,alt:x.alt,alts:[],warns:{}})}
+function cards(items){return items.map(x=>x.w2!==undefined?{k:x.k,nom:x.nom,g:x.g,pair:true,num:true,full:x.t,parts:[{t:x.w,warns:{},num:true},{t:x.w2,warns:x.warns2,num:true}]}:mode==="palabra"?{k:x.k,g:x.g,t:x.w,alts:x.alts,warns:x.warns,full:x.t,dud:x.dud}:{k:x.k,g:x.g,t:x.t,alt:x.alt,alts:[],warns:{}})}
 
 function chipRow(id,opts,cur,onPick){const box=$(id);box.innerHTML="";opts.forEach(o=>{const b=document.createElement("button");b.className="chip";b.type="button";
   b.setAttribute("aria-pressed",String(o.v===cur));b.innerHTML=o.html;b.disabled=!!o.off;b.onclick=()=>onPick(o.v);box.appendChild(b)})}
@@ -363,11 +370,12 @@ function fieldHtml(id,t,label){const tr=level===1?esc(t):level===2?esc(hint(t)):
   return `<div class="field"><div class="trace" aria-hidden="true">${tr}</div><input class="inp" id="${id}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="${esc(label)}"></div>`}
 function renderSheet(){
   let html="",lastG=null; const showG=level<3&&!$("#shuffle").checked;
-  if(list[0]&&list[0].pair)html+=`<div class="row head"><span></span><div class="pairs"><span class="lab">Identificación</span><span class="lab">Aviso</span></div></div>`;
+  if(list[0]&&list[0].pair)html+=`<div class="row pair head"><div class="pairs"><span class="lab">Identificación</span><span class="lab">Aviso</span></div></div>`;
   list.forEach((c,ix)=>{
     if(showG&&c.g!==lastG){html+=`<div class="sec">${esc(c.g)}</div>`;lastG=c.g}
     const body=c.pair?`<div class="pairs">${fieldHtml("in"+ix+"a",c.parts[0].t,c.k+" identificación")}${fieldHtml("in"+ix+"b",c.parts[1].t,c.k+" aviso")}</div>`:fieldHtml("in"+ix,c.t,c.k);
-    html+=`<div class="row" id="row${ix}"><span class="k">${esc(c.k)}${c.dud?"?":""}</span><div class="cell">${body}<div class="res" id="res${ix}"></div></div></div>`;
+    html+=c.pair?`<div class="row pair" id="row${ix}"><div class="cell"><div class="pk"><span class="k">${esc(c.k)}</span>${c.nom?`<span class="nom">· ${esc(c.nom)}</span>`:""}</div>${body}<div class="res" id="res${ix}"></div></div></div>`
+      :`<div class="row" id="row${ix}"><span class="k">${esc(c.k)}${c.dud?"?":""}</span><div class="cell">${body}<div class="res" id="res${ix}"></div></div></div>`;
   });
   $("#sheet").innerHTML=html;
   const ins=[...document.querySelectorAll(".inp")];
@@ -394,7 +402,7 @@ function checkAll(){
     if(c.pair){
       const rs=c.parts.map((p,j)=>{const el=$("#in"+ix+"ab"[j]); el.readOnly=true; el.previousElementSibling.style.visibility="hidden"; const r=grade(el.value,p); el.parentElement.classList.add(isGood(r)?"f-ok":"f-bad"); return r});
       good=rs.every(isGood);
-      html=`<span class="mark">${good?"✓":"✗"}</span>`+(good?"":`<span class="ans">Identificación: ${esc(c.parts[0].t)} · Aviso: ${esc(c.parts[1].t)}</span>`)+(c.full?`<span class="full">${esc(c.full)}</span>`:"")+rs.filter(r=>r.msg).map(r=>`<span class="msg">${esc(r.msg)}</span>`).join("");
+      html=`<span class="mark">${good?"✓":"✗"}</span>`+`<span class="full">${esc(c.k)}${c.nom?" · "+esc(c.nom):""}</span>`+(good?"":`<span class="ans">Identificación: ${esc(c.parts[0].t)} · Aviso: ${esc(c.parts[1].t)}</span>`)+(c.full?`<span class="full">${esc(c.full)}</span>`:"")+rs.filter(r=>r.msg).map(r=>`<span class="msg">${esc(r.msg)}</span>`).join("");
     } else {
       const el=$("#in"+ix), r=grade(el.value,c); el.readOnly=true; el.previousElementSibling.style.visibility="hidden";
       good=isGood(r);
@@ -402,7 +410,7 @@ function checkAll(){
       html=`<span class="mark">${MARK[r.s]}</span>${r.s==="ok"?"":`<span class="ans">${esc(c.t)}</span>`}${full}${r.msg?`<span class="msg">${esc(r.msg)}</span>`:""}${c.alt&&!good?`<span class="msg">También vale: ${esc(c.alt)}</span>`:""}`;
       if(r.s==="near"||r.s==="warn"){row.className="row warn"}
     }
-    if(!row.className.includes("warn"))row.className="row "+(good?"ok":"bad");
+    if(!row.className.includes("warn"))row.className="row "+(c.pair?"pair ":"")+(good?"ok":"bad");
     if(good)ok++; else miss.push(c);
     out.innerHTML=html;
   });
