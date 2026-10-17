@@ -44,6 +44,12 @@ h1{font-family:var(--f-name);font-weight:600;font-size:clamp(24px,5vw,32px);line
 .chip small{font-family:var(--f-num);font-size:11px;opacity:.75;margin-left:6px}
 .chip:focus-visible,.btn:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .toggle{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.decks{display:grid;gap:12px}
+.dgroup{display:grid;gap:6px}
+.dlab{font-size:13px;color:var(--muted)}
+.dlab b{color:var(--ink);font-weight:600}
+.doctitle{display:grid;gap:2px;padding-top:4px;border-top:1px solid var(--line);padding-block:14px 0}
+.doctitle h2{font-family:var(--f-name);font-weight:600;font-size:clamp(19px,4vw,23px);line-height:1.2;margin:0;text-wrap:balance}
 .sheet{background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:18px 16px;display:grid;gap:4px;min-width:0}
 .sec{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:12px 0 4px}
 .sec:first-child{padding-top:0}
@@ -102,12 +108,13 @@ kbd{font-family:var(--f-num);font-size:11.5px;border:1px solid var(--line);borde
   </header>
 
   <section class="controls" aria-label="Qué vas a repasar">
-    <div class="ctl"><span class="lab">Serie</span><div class="chips" id="decks"></div></div>
+    <div class="ctl"><span class="lab">Serie</span><div class="decks" id="decks"></div></div>
     <div class="ctl"><span class="lab">Ayuda</span><div class="chips" id="levels"></div></div>
     <div class="ctl"><span class="lab">Qué escribes</span><div class="chips" id="modes"></div></div>
     <label class="toggle"><input type="checkbox" id="shuffle"> En desorden</label>
   </section>
 
+  <div class="doctitle" id="doctitle" aria-live="polite"></div>
   <section class="sheet" id="sheet" aria-label="Lista para llenar"></section>
 
   <div class="bar" id="bar"></div>
@@ -217,7 +224,7 @@ R.forEach(r=>{const n=+r.k.slice(2);const [w,a,wa]=KW[n];r.w=w;r.alts=a;r.warns=
 /* Módulo 3: tus palabras, cotejadas por el coordinador del M3 (Cotejo palabras M3 · v1, 13-oct) contra los Lineamientos del Informe de Auditoría (DOF 18-oct-2021) y el Reglamento de Supervisión de la CNBV. */
 const LIA="Lineamientos · Octavo A";
 const M3=[
- {id:"m3-fr",n:"M3 · Fracciones I a XIV",sub:"Lineamientos",palabra:true,items:[
+ {id:"m3-fr",n:"Fracciones I a XIV",sub:"Lineamientos",palabra:true,items:[
   ["I","Identificación","De las políticas de identificación del Cliente o Usuario"],
   ["II","Metodología","De la elaboración de una metodología con enfoque basado en riesgos"],
   ["III","Conocimiento","De las políticas de conocimiento del Cliente o Usuario"],
@@ -233,7 +240,7 @@ const M3=[
   ["XIII","Otra","De otra información",["otra informacion"]],
   ["XIV","Comisionistas","De los comisionistas a que se refieren las Disposiciones",[],{"comision":"!Es «Comisionistas». «La Comisión» es la CNBV, que aparece en la fr. IV."}]
  ].map(([k,w,t,alts,warns])=>({k:"Fr. "+k,w,t,g:LIA+" · fracciones",alts:alts||[],warns:warns||{}}))},
- {id:"m3-inc",n:"M3 · Incisos a) a k)",sub:"Octavo A, fr. III",palabra:true,items:[
+ {id:"m3-inc",n:"Incisos a) a k)",sub:"Octavo A, fr. III",palabra:true,items:[
   ["a","Manual","Base","Cuenta con el Manual de Cumplimiento con los criterios, medidas y procedimientos para el debido conocimiento del Cliente o Usuario."],
   ["b","Perfil transaccional","Conocer","Criterios, medidas y procedimientos para determinar el perfil y el comportamiento transaccional del Cliente o Usuario.",["perfil"]],
   ["c","Grado de riesgo","Conocer","Modelo de evaluación de Riesgos para determinar el Grado de Riesgo de los Clientes o Usuarios."],
@@ -246,7 +253,7 @@ const M3=[
   ["j","Sujetos Supervisados","Detectar","Número, monto y frecuencia de Operaciones con Sujetos Supervisados que tengan la calidad de Cliente o Usuario.",["suj sup"],{"supervisada":"!Es «Sujetos Supervisados». «Entidad Supervisada» es del Reglamento de Supervisión: te cruza dos normas."}],
   ["k","Listas","Detectar","Identificar a Clientes o Usuarios en la Lista de Personas Bloqueadas, a terceros que actúen por ellos y sus Operaciones.",["bloqueadas","personas bloqueadas"]]
  ].map(([k,w,g,t,alts,warns])=>({k:k+")",w,t,g:"Octavo A, fr. III · "+g,alts:alts||[],warns:warns||{}}))},
- {id:"m3-tit",n:"M3 · Títulos I a X",sub:"Reglamento de Supervisión",palabra:true,items:[
+ {id:"m3-tit",n:"Títulos I a X",sub:"Reglamento de Supervisión",palabra:true,items:[
   ["I","Definiciones","De las Disposiciones Generales","1",["disposiciones generales"]],
   ["II","Visita","De la Inspección","4",["inspeccion"]],
   ["III","Vigilancia","De la Vigilancia","43"],
@@ -317,8 +324,8 @@ const U17=[
 /* Nombres cortos de la serie de umbrales: criterio 360Educa del coordinador del M2 («claves de la serie de umbrales · v2», 17-oct). */
 const U17N={"Fr. I": "Juegos y sorteos", "Fr. II a)": "Tarjetas de crédito", "Fr. II b)": "Tarjetas prepagadas", "Fr. II c)": "Valor monetario", "Fr. III": "Cheques de viajero", "Fr. IV": "Préstamos", "Fr. V": "Inmuebles", "Fr. V Bis": "Desarrollo inmobiliario", "Fr. VI": "Joyas y metales", "Fr. VII": "Obras de arte", "Fr. VIII": "Vehículos", "Fr. IX": "Blindaje", "Fr. X a)": "Traslado con monto", "Fr. X b)": "Traslado sin monto", "Fr. XI": "Profesionistas independientes", "Fr. XII A a)": "XII A = notarios · a) inmuebles", "Fr. XII A b)": "XII A = notarios · b) poderes", "Fr. XII A c)": "XII A = notarios · c) personas morales", "Fr. XII A d)": "XII A = notarios · d) fideicomisos", "Fr. XII A e)": "XII A = notarios · e) mutuo o crédito", "Fr. XII B a)": "XII B = corredores · a) avalúos", "Fr. XII B b)–d)": "XII B = corredores · b) sociedades · c) fideicomisos · d) mutuo", "Fr. XIII": "Donativos", "Fr. XIV a) b) c) f)": "Aduanas · a) vehículos · b) máquinas de juego · c) tarjetas de pago · f) blindaje", "Fr. XIV d)": "Aduanas: joyas", "Fr. XIV e)": "Aduanas: arte", "Fr. XV": "Arrendamiento", "Fr. XVI a)": "Activos virtuales: operación", "Fr. XVI b)": "Activos virtuales: comisión"};
 const M2=[
- {id:"m2-fr",n:"M2 · Art. 17 fracciones",sub:"LFPIORPI",palabra:true,items:FR17.map(([k,w,t,alts])=>({k:"Fr. "+k,w,t,g:LEY,alts:alts||[],warns:{}}))},
- {id:"m2-umb",n:"M2 · Umbrales",sub:"Identificación y Aviso",palabra:true,pair:true,items:U17.map(([k,i,a,warns,nota])=>({k,nom:U17N[k],w:i,w2:a,t:nota||"",g:LEY+" · umbrales en veces la UMA",alts:[],warns:{},warns2:warns||{},num:true}))}
+ {id:"m2-fr",n:"Fracciones",sub:"LFPIORPI",palabra:true,items:FR17.map(([k,w,t,alts])=>({k:"Fr. "+k,w,t,g:LEY,alts:alts||[],warns:{}}))},
+ {id:"m2-umb",n:"Umbrales",sub:"Identificación y Aviso",palabra:true,pair:true,items:U17.map(([k,i,a,warns,nota])=>({k,nom:U17N[k],w:i,w2:a,t:nota||"",g:LEY+" · umbrales en veces la UMA",alts:[],warns:{},warns2:warns||{},num:true}))}
 ];
 
 /* ENR 2023 · niveles de riesgo («Práctica diaria · ENR niveles · v1», coordinador del M3, 17-oct; cotejado contra el apartado XI de la ENR 2023). Niveles de la ENR; abreviaturas, criterio de clase 360Educa. Factores: dos letras (impacto o facilitación / ocurrencia o explotación), «MB» = Medio/Bajo. Sectores y riesgos finales: una etiqueta, «M-B» = Medio-Bajo. */
@@ -330,18 +337,28 @@ function enrItems(rows,factor){return rows.map(([clave,w,alt,t,g,src])=>{
   else if(w.includes("-")){const pegado=w.replace("-",""); warns[pegado]="!En un sector va con guion: «"+w+"» ("+alt+"). «"+pegado+"» sin guion es un factor ("+alt.replace("-","/")+").";}
   return {k:m[1],nom:m[2],w,t:t+" · "+src,g,alts:[alt],warns,lvl:true}})}
 const ENR=[
- {id:"enr-f",n:"ENR · 37 factores",sub:"grados",palabra:true,wide:true,items:enrItems(ENR_RAW["1"],true)},
- {id:"enr-sf",n:"ENR · Sectores SF (23)",sub:"nivel 2023",palabra:true,wide:true,items:enrItems(ENR_RAW["2"],false)},
- {id:"enr-av",n:"ENR · Sectores AV (18)",sub:"nivel 2023",palabra:true,wide:true,items:enrItems(ENR_RAW["3"],false)},
- {id:"enr-rf",n:"ENR · Riesgos finales (6)",sub:"conclusión nacional",palabra:true,wide:true,items:enrItems(ENR_RAW["4"],false)}
+ {id:"enr-f",n:"37 factores",sub:"grados",palabra:true,wide:true,items:enrItems(ENR_RAW["1"],true)},
+ {id:"enr-sf",n:"Sectores SF",sub:"nivel 2023",palabra:true,wide:true,items:enrItems(ENR_RAW["2"],false)},
+ {id:"enr-av",n:"Sectores AV",sub:"nivel 2023",palabra:true,wide:true,items:enrItems(ENR_RAW["3"],false)},
+ {id:"enr-rf",n:"Riesgos finales",sub:"conclusión nacional",palabra:true,wide:true,items:enrItems(ENR_RAW["4"],false)}
 ];
 
+/* De qué módulo y documento es cada serie. */
+const DOCS={
+ gafi:{mod:"Módulo 1",doc:"Las Recomendaciones del GAFI",ver:"Traducción al español de diciembre de 2025 (GAFILAT)"},
+ ley:{mod:"Módulo 2",doc:"LFPIORPI · artículo 17, actividades vulnerables",ver:"Texto vigente, última reforma DOF 16-07-2025"},
+ lia:{mod:"Módulo 3",doc:"Lineamientos para la elaboración del Informe de Auditoría PLD/FT · Octavo A",ver:"DOF 18-oct-2021"},
+ rs:{mod:"Módulo 3",doc:"Reglamento de Supervisión de la CNBV",ver:"Compilación CNBV con la reforma del 21-jul-2021"},
+ enr:{mod:"Módulo 3",doc:"Evaluación Nacional de Riesgos 2023 · niveles de riesgo",ver:"SHCP-UIF, noviembre de 2023, apartado XI"}
+};
+const DOC_DE={"r9-23":"gafi","r26-35":"gafi","r1-40":"gafi","m2-fr":"ley","m2-umb":"ley","m3-fr":"lia","m3-inc":"lia","m3-tit":"rs","enr-f":"enr","enr-sf":"enr","enr-av":"enr","enr-rf":"enr"};
+const docOf=d=>DOCS[DOC_DE[d.id]];
 const DECKS=[
  {id:"r9-23",n:"R.9 a R.23",sub:"Medidas preventivas",items:rng(9,23)},
  {id:"r26-35",n:"R.26 a R.35",sub:"Autoridades",items:rng(26,35)},
  {id:"r1-40",n:"R.1 a R.40",sub:"Las 40",items:R},
- ...M3,
  ...M2,
+ ...M3,
  ...ENR
 ];
 
@@ -376,12 +393,21 @@ function cards(items){return items.map(x=>x.w2!==undefined?{k:x.k,nom:x.nom,g:x.
 function chipRow(id,opts,cur,onPick){const box=$(id);box.innerHTML="";opts.forEach(o=>{const b=document.createElement("button");b.className="chip";b.type="button";
   b.setAttribute("aria-pressed",String(o.v===cur));b.innerHTML=o.html;b.disabled=!!o.off;b.onclick=()=>onPick(o.v);box.appendChild(b)})}
 function renderControls(){
-  chipRow("#decks",DECKS.map(d=>({v:d,html:esc(d.n)+"<small>"+d.items.length+"</small>"})),deck,v=>{deck=v;if(deck.palabra)mode="palabra";newRound()});
+  const box=$("#decks"); box.innerHTML="";
+  [...new Set(DECKS.map(d=>DOC_DE[d.id]))].forEach(key=>{
+    const D=DOCS[key], grp=document.createElement("div"); grp.className="dgroup";
+    grp.innerHTML=`<span class="dlab"><b>${esc(D.mod)}</b> · ${esc(D.doc)}</span><div class="chips"></div>`;
+    const row=grp.querySelector(".chips");
+    DECKS.filter(d=>DOC_DE[d.id]===key).forEach(d=>{const b=document.createElement("button");b.className="chip";b.type="button";
+      b.setAttribute("aria-pressed",String(d===deck));b.innerHTML=esc(d.n)+"<small>"+d.items.length+"</small>";
+      b.onclick=()=>{deck=d;if(deck.palabra)mode="palabra";newRound()};row.appendChild(b)});
+    box.appendChild(grp)});
   chipRow("#levels",[{v:1,html:"Calcar"},{v:2,html:"Primera letra"},{v:3,html:"Nada"}],level,v=>{level=v;newRound()});
   chipRow("#modes",[{v:"palabra",html:"Una palabra"},{v:"nombre",html:"Nombre completo",off:!!deck.palabra}],mode,v=>{mode=v;newRound()});
 }
 function newRound(items){
   renderControls(); round=items?round+1:1;
+  {const D=docOf(deck); $("#doctitle").innerHTML=`<span class="eyebrow">${esc(D.mod)} · ${esc(deck.n)}</span><h2>${esc(D.doc)}</h2><span class="note">${esc(D.ver)}</span>`;}
   list=cards(items||deck.items); if($("#shuffle").checked)list.sort(()=>Math.random()-.5);
   checked=false; renderSheet(); renderBar();
 }
@@ -434,7 +460,7 @@ function checkAll(){
     out.innerHTML=html;
   });
   const d=new Date().toLocaleDateString("es-MX",{day:"numeric",month:"short"});
-  if(round===1){const h=store.get("rep.hist",[]); h.unshift({d,deck:deck.n+(mode==="palabra"?"":" · nombre"),level,ok,n:list.length}); store.set("rep.hist",h.slice(0,30)); renderLog()}
+  if(round===1){const h=store.get("rep.hist",[]); h.unshift({d,deck:docOf(deck).mod.replace("Módulo ","M")+" · "+deck.n+(mode==="palabra"?"":" · nombre"),level,ok,n:list.length}); store.set("rep.hist",h.slice(0,30)); renderLog()}
   renderBar({ok,n:list.length,miss});
   $("#bar").scrollIntoView({block:"nearest"});
 }
