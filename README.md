@@ -22,3 +22,4 @@ Un solo archivo, `index.html`, sin dependencias salvo Google Fonts. El historial
 - v9 (17-oct-2026): refuerzo de financiamiento al terrorismo en el Módulo 1.
 - v10 (17-oct-2026): refuerzo de la ENR 2023 (ENR refuerzo v1 del coordinador del Módulo 3). Niveles sin cambio, sólo 2023.
 - v11 (17-oct-2026): plazos de reportes y avisos por sector del Módulo 2, con la tarjeta de lógica (criterio de 360Educa). Datos sin cambio.
+- v12 (17-oct-2026): refuerzo FT cotejado por el coordinador del Módulo 1 contra el CPF (DOF 13-03-2026) y la R.5 del GAFI (dic-2025). Correcciones: R.5 en pág. 15; numeral 5) se llama «Robo»; art. 170 párrafos 1.º a 3.º; nota de la denuncia de la SHCP con la reforma del 400 Bis (DOF 16-07-2025).
