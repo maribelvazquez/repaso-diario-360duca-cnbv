@@ -50,6 +50,19 @@ h1{font-family:var(--f-name);font-weight:600;font-size:clamp(24px,5vw,32px);line
 .dlab b{color:var(--ink);font-weight:600}
 .doctitle{display:grid;gap:2px;padding-top:4px;border-top:1px solid var(--line);padding-block:14px 0}
 .doctitle h2{font-family:var(--f-name);font-weight:600;font-size:clamp(19px,4vw,23px);line-height:1.2;margin:0;text-wrap:balance}
+.lectura{margin-top:10px;background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:12px 16px;font-size:15px;line-height:1.55}
+.lectura summary{cursor:pointer;font-weight:600;color:var(--accent)}
+.lectura h3{font-family:var(--f-name);font-size:17px;margin:18px 0 6px;font-weight:600}
+.lectura p,.lectura ul,.lectura ol{margin:8px 0;max-width:66ch}
+.lectura .big{font-family:var(--f-name);font-size:18px;line-height:1.4}
+.lectura .duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lectura .duo>div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
+.lectura .ojo{background:var(--warn-soft);color:var(--ink);border-radius:10px;padding:10px 12px}
+.lectura .nota{font-size:12.5px;color:var(--muted)}
+.lectura table{border-collapse:collapse;font-size:13.5px;width:100%;margin:8px 0}
+.lectura th,.lectura td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+.lectura th{color:var(--muted);font-weight:500}
+@media (max-width:520px){.lectura .duo{grid-template-columns:1fr}}
 .sheet{background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:18px 16px;display:grid;gap:4px;min-width:0}
 .sec{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:12px 0 4px}
 .sec:first-child{padding-top:0}
@@ -343,20 +356,121 @@ const ENR=[
  {id:"enr-rf",n:"Riesgos finales",sub:"conclusión nacional",palabra:true,wide:true,items:enrItems(ENR_RAW["4"],false)}
 ];
 
+/* Refuerzo FT (17-oct-2026). Fuentes: CPF, última reforma DOF 13-03-2026 (arts. 139 a 139 Quinquies, 148 Bis a 148 Quáter, 400 Bis); GAFI R.5 y su Nota Interpretativa, dic-2025 (págs. 12 y 47). Las definiciones «del GAFILAT» y «de la CNBV» vienen de clases y simulador: no están en la bibliografía del temario. */
+const ftw=(k,nom,w,t,alts,warns)=>({k,nom,w,t,g:"",alts:alts||[],warns:warns||{}});
+const FT_PIEZAS=[
+ ftw("1","«…ya sea directa o indirectamente, ____ fondos económicos o recursos…»","aporte o recaude","Los dos verbos del FT. «Oculte o encubra» son del lavado (400 Bis fr. II).",["aportar o recaudar","aporta o recauda"],{"oculte o encubra":"!Esos son verbos del lavado (art. 400 Bis, fr. II). El FT es «aporte o recaude»."}),
+ ftw("2","«…fondos económicos o recursos de ____…»","cualquier naturaleza","No exige origen ilícito: puede ser un sueldo, una camioneta, un donativo.",[],{"procedencia ilicita":"!Eso es del lavado. El FT dice «de cualquier naturaleza»: el dinero puede ser lícito."}),
+ ftw("3","«…con ____ de que serán destinados…»","conocimiento","Sin saber el destino no hay FT. El conocimiento mira hacia adelante: a dónde va el dinero.",["conocimiento de"]),
+ ftw("4","«…serán destinados para ____ actividades de individuos u organizaciones terroristas…»","financiar o apoyar","",["financiar y apoyar"]),
+ ftw("5","«…o pretendan ser utilizados, directa o indirectamente, ____…»","total o parcialmente","Basta que una parte del dinero vaya al delito.",[]),
+ ftw("6","«…para la comisión, en ____, de cualquiera de los delitos…»","territorio nacional o en el extranjero","",["territorio nacional o extranjero","mexico o el extranjero"]),
+ ftw("7","«Se impondrá la misma pena señalada en el artículo ____ de este Código…»","139","El FT no tiene pena propia: toma la del terrorismo.",["art 139","articulo 139"],{"400 bis":"!Esa es la del lavado. El FT remite al art. 139 (terrorismo)."}),
+ ftw("8","«…sin perjuicio de las penas que corresponden por ____»","los demás delitos que resulten","Se suman, no se sustituyen.",["demas delitos que resulten","los demas delitos"])
+];
+const FT_LISTA=[
+ ftw("Fr. I 1)","Arts. 139, 139 Bis y 139 Ter","Terrorismo","Art. 139 Quáter, fr. I, numeral 1)",[]),
+ ftw("Fr. I 2)","Art. 140","Sabotaje","Art. 139 Quáter, fr. I, numeral 2)",[]),
+ ftw("Fr. I 3)","Arts. 148 Bis, 148 Ter y 148 Quáter","Terrorismo internacional","Art. 139 Quáter, fr. I, numeral 3)",[]),
+ ftw("Fr. I 4)","Arts. 167 fr. IX y 170","Ataques a las vías de comunicación","Art. 139 Quáter, fr. I, numeral 4)",["ataques a vias de comunicacion","vias de comunicacion"]),
+ ftw("Fr. I 5)","Art. 368 Quinquies","Robo de material radiactivo","Art. 139 Quáter, fr. I, numeral 5): robo de material radiactivo, nuclear, combustible nuclear, mineral radiactivo o fuente de radiación",["robo","robo de material nuclear","robo material radiactivo"]),
+ ftw("Fr. II","Arts. 10 y 13 de una ley especial","Reservas mineras","Ley que Declara Reservas Mineras los Yacimientos de Uranio, Torio y demás substancias de las que se obtengan isótopos hendibles (art. 139 Quáter, fr. II)",["ley de reservas mineras","uranio y torio","uranio"])
+];
+/* Penas: [clave, quién, prisión [min,max], multa [min,max], unidad «uma» o «dm», nota] */
+const PEN=[
+ ["Art. 139","Terrorismo (el acto)",[15,40],[400,1200],"uma","Párrafo reformado DOF 07-06-2024: veces el valor diario de la UMA."],
+ ["Art. 139 Quáter","Financiamiento al terrorismo",[15,40],[400,1200],"uma","«La misma pena señalada en el artículo 139»."],
+ ["Art. 139 Bis","Encubrir a un terrorista",[1,9],[100,300],"dm",""],
+ ["Art. 139 Ter","Amenazar con terrorismo",[5,15],[200,600],"dm",""],
+ ["Art. 139 Quinquies","Encubrir a quien financió (FT)",[1,9],[100,300],"dm","Igual que el 139 Bis."],
+ ["Art. 148 Bis","Terrorismo internacional",[15,40],[400,1200],"dm","¡Mismos números que el 139, pero en DÍAS MULTA! Es la trampa del simulador."],
+ ["Art. 148 Ter","Encubrir a un terrorista (internacional)",[5,10],[100,300],"dm",""],
+ ["Art. 148 Quáter","Amenazar con terrorismo internacional",[6,12],[200,600],"dm",""],
+ ["Art. 400 Bis","Lavado (operaciones con recursos de procedencia ilícita)",[5,15],[1000,5000],"dm","Para comparar."]
+];
+const fmtN=n=>n.toLocaleString("es-MX");
+const FT_PENAS=PEN.map(([k,nom,p,m,u,nota])=>({k,nom,t:nota,g:"",parts:[
+  {t:fmtN(p[0])+" a "+fmtN(p[1]),pen:{nums:p}},
+  {t:fmtN(m[0])+" a "+fmtN(m[1])+(u==="uma"?" veces la UMA":" días multa"),pen:{nums:m,unit:u}}]}));
+const FT_FUENTE=[
+ ftw("Texto A","«…intencionalmente realice actos en contra de bienes o servicios, ya sea públicos o privados… que produzcan alarma, temor o terror en la población…»","Terrorismo","CPF art. 139, fr. I. Habla del ACTO; no menciona fondos. Es el distractor de la pregunta de definiciones de FT.",["cpf 139","art 139","139"],{"cpf":"!Sí es del CPF, pero del art. 139: terrorismo, el acto. No habla de dinero, así que no es FT.","ft":"!No habla de fondos: es terrorismo (CPF art. 139), el acto.","cnbv":"!La «de la CNBV» empieza con «aportación, financiación o recaudación». Esta habla de actos: es el terrorismo del CPF art. 139."}),
+ ftw("Texto B","«Es cada asistencia, apoyo o conspiración… para coleccionar fondos con la intención que se usen con el fin de cometer un acto terrorista… Pueden ser tanto fondos lícitos como ilícitos.»","GAFILAT","Definición que enseñan las clases y el simulador como «del GAFILAT». No está en la bibliografía. Delatores: «asistencia, apoyo o conspiración» y «lícitos como ilícitos».",[]),
+ ftw("Texto C","«Consiste en la aportación, financiación o recaudación de recursos o fondos económicos que tengan como fin provocar alarma, temor o terror en la población…»","CNBV","Definición que enseñan las clases y el simulador como «de la CNBV». No está en la bibliografía (el VSPP sólo define el lavado). Delatores: «aportación, financiación o recaudación» + el fin del terrorismo (alarma, temor o terror).",[]),
+ ftw("Texto D","«Al que por cualquier medio… aporte o recaude fondos económicos o recursos de cualquier naturaleza, con conocimiento de que serán destinados…»","CPF","CPF art. 139 Quáter. Delatores: «Al que», «aporte o recaude», «de cualquier naturaleza» y la lista de delitos.",["139 quater","cpf 139 quater","art 139 quater"],{"139":"!Es el 139 Quáter (FT), no el 139 (terrorismo)."}),
+ ftw("Texto E","«…para la comisión, en territorio nacional o en el extranjero, de cualquiera de los delitos previstos en los ordenamientos legales siguientes…»","CPF","CPF art. 139 Quáter. Sólo el CPF trae la lista de delitos y «territorio nacional o en el extranjero».",["139 quater","cpf 139 quater"]),
+ ftw("Texto F","«Los países deben tipificar el financiamiento del terrorismo en base al Convenio Internacional para la Represión de la Financiación del Terrorismo…»","GAFI","GAFI R.5 (dic-2025, pág. 12). El GAFI no castiga: ordena a los países tipificar.",["r5","r 5","gafi r5","gafi r 5","gafi r5 ni"]),
+ ftw("Texto G","«…deben extenderse a cualquier fondo u otros activos, procedan de una fuente legítima o ilegítima.»","GAFI","GAFI, Nota Interpretativa R.5, párr. 5 (pág. 47).",["ni r5","r5","gafi r5","ni r 5","r 5","gafi r 5","gafi ni r5","gafi ni r 5","nota interpretativa r5","nota interpretativa r 5"],{"gafilat":"!Se parece a «lícitos como ilícitos» del GAFILAT, pero «fuente legítima o ilegítima» y «deben extenderse» son de la Nota Interpretativa de la R.5 del GAFI."}),
+ ftw("Texto H","«…no deben exigir que los fondos u otros activos hayan sido realmente utilizados para realizar un acto terrorista…»","GAFI","GAFI, Nota Interpretativa R.5, párr. 6 (pág. 47): no hace falta que el atentado ocurra.",["ni r5","r5","gafi r5","ni r 5","r 5","gafi r 5","gafi ni r5","gafi ni r 5","nota interpretativa r5","nota interpretativa r 5"])
+];
+const ld=(k,nom,w,t,alts)=>ftw(k,nom,w,t,(alts||[]).concat(w==="LD"?["lavado","orpi","400 bis"]:w==="FT"?["financiamiento","financiamiento al terrorismo","139 quater"]:[]));
+const FT_LDFT=[
+ ld("1","De 5 a 15 años de prisión","LD","Art. 400 Bis."),
+ ld("2","De 15 a 40 años de prisión","FT","Arts. 139 Quáter y 139."),
+ ld("3","De 1,000 a 5,000 días multa","LD","Art. 400 Bis."),
+ ld("4","De 400 a 1,200 veces el valor diario de la UMA","FT","Arts. 139 Quáter y 139."),
+ ld("5","«Aporte o recaude»","FT","Art. 139 Quáter."),
+ ld("6","«Oculte, encubra o pretenda ocultar o encubrir»","LD","Art. 400 Bis, fr. II."),
+ ld("7","Los recursos pueden ser de origen lícito","FT","CPF 139 Quáter «de cualquier naturaleza»; NI R.5 párr. 5 «fuente legítima o ilegítima»."),
+ ld("8","«Proceden o representan el producto de una actividad ilícita»","LD","Art. 400 Bis."),
+ ld("9","«Con conocimiento de que serán destinados…»","FT","Art. 139 Quáter: mira hacia adelante, al destino."),
+ ld("10","«Por sí o por interpósita persona»","LD","Art. 400 Bis, primer párrafo."),
+ ld("11","Para ejercer la acción penal se requiere la denuncia de la SHCP","LD","Art. 400 Bis (si se usaron servicios del sistema financiero)."),
+ ld("12","«Total o parcialmente»","FT","Art. 139 Quáter."),
+ ld("13","Colocación, estratificación e integración","LD","VSPP de la CNBV: las etapas son del lavado."),
+ ld("14","No hace falta que el atentado se cometa","FT","GAFI, NI R.5 párr. 6.")
+];
+const FTD=[
+ {id:"ft-ld",n:"¿LD o FT?",sub:"",palabra:true,wide:true,items:FT_LDFT},
+ {id:"ft-pz",n:"139 Quáter pieza por pieza",sub:"",palabra:true,wide:true,items:FT_PIEZAS},
+ {id:"ft-ls",n:"Lista 5 + 1",sub:"",palabra:true,wide:true,items:FT_LISTA},
+ {id:"ft-pn",n:"Penas: prisión y multa",sub:"",palabra:true,pair:true,labels:["Prisión (años)","Multa (con unidad)"],items:FT_PENAS},
+ {id:"ft-fu",n:"¿De quién es el texto?",sub:"",palabra:true,wide:true,items:FT_FUENTE}
+];
+const FT_LECTURA=`
+<p class="big">El lavado mira <b>hacia atrás</b>: ¿de dónde viene el dinero? El financiamiento al terrorismo mira <b>hacia adelante</b>: ¿a dónde va?</p>
+<p>Por eso en el FT el dinero puede ser <b>limpio</b>: un sueldo, un donativo, una camioneta. Lo que lo vuelve delito es que <b>sabes</b> que va para terroristas o para cometer uno de los delitos de la lista. El CPF dice «recursos <b>de cualquier naturaleza</b>» y la Nota Interpretativa de la R.5 del GAFI dice «procedan de una fuente <b>legítima o ilegítima</b>».</p>
+<h3>No confundas terrorismo con FT</h3>
+<div class="duo"><div><b>Terrorismo · art. 139</b><br>Es el <b>acto</b>: «realice actos en contra de bienes o servicios… que produzcan alarma, temor o terror». No habla de dinero. Capítulo VI.</div><div><b>FT · art. 139 Quáter</b><br>Es el <b>dinero</b> para ese acto o para el terrorista: «aporte o recaude fondos… con conocimiento de que serán destinados…». Capítulo VI Bis.</div></div>
+<h3>El 139 Quáter en seis piezas</h3>
+<ol><li><b>Quién:</b> «al que», por cualquier medio, <b>directa o indirectamente</b>.</li><li><b>Qué hace:</b> «<b>aporte o recaude</b>».</li><li><b>Qué:</b> «fondos económicos o recursos <b>de cualquier naturaleza</b>».</li><li><b>Sabiendo:</b> «con <b>conocimiento</b> de que serán destinados».</li><li><b>Para qué:</b> «<b>financiar o apoyar</b> actividades de individuos u organizaciones terroristas», o para cometer, <b>total o parcialmente</b>, <b>en territorio nacional o en el extranjero</b>, los delitos de la lista.</li><li><b>La lista, 5 + 1:</b> terrorismo, sabotaje, terrorismo internacional, ataques a las vías de comunicación y robo de material radiactivo (fr. I, CPF), más la ley de reservas mineras de uranio y torio (fr. II).</li></ol>
+<h3>La pena: la del terrorismo, y fíjate en la unidad</h3>
+<p>El 139 Quáter no tiene pena propia: «la misma pena señalada en el artículo 139». Son <b>15 a 40 años</b> y <b>400 a 1,200 veces el valor diario de la UMA</b> (reforma DOF 07-06-2024).</p>
+<p class="ojo"><b>La trampa del simulador:</b> el terrorismo <b>internacional</b> (art. 148 Bis) tiene los <b>mismos números</b>, 15 a 40 años y 400 a 1,200, pero en <b>días multa</b>. Regla: <b>nacional y FT = UMA</b>; internacional, encubrir y amenazar = días multa.</p>
+<table><thead><tr><th>Artículo</th><th>Conducta</th><th>Prisión</th><th>Multa</th></tr></thead><tbody>
+<tr><td>139</td><td>Terrorismo</td><td>15–40</td><td>400–1,200 <b>UMA</b></td></tr>
+<tr><td>139 Quáter</td><td>FT</td><td>15–40</td><td>400–1,200 <b>UMA</b></td></tr>
+<tr><td>139 Bis</td><td>Encubrir a un terrorista</td><td>1–9</td><td>100–300 días multa</td></tr>
+<tr><td>139 Ter</td><td>Amenazar con terrorismo</td><td>5–15</td><td>200–600 días multa</td></tr>
+<tr><td>139 Quinquies</td><td>Encubrir a quien financió</td><td>1–9</td><td>100–300 días multa</td></tr>
+<tr><td>148 Bis</td><td>Terrorismo internacional</td><td>15–40</td><td>400–1,200 <b>días multa</b></td></tr>
+<tr><td>148 Ter</td><td>Encubrir (internacional)</td><td>5–10</td><td>100–300 días multa</td></tr>
+<tr><td>148 Quáter</td><td>Amenazar (internacional)</td><td>6–12</td><td>200–600 días multa</td></tr>
+<tr><td>400 Bis</td><td>Lavado</td><td>5–15</td><td>1,000–5,000 días multa</td></tr>
+</tbody></table>
+<h3>Las definiciones que te preguntan</h3>
+<p>El examen te da un texto y pregunta de quién es. Busca la palabra que delata:</p>
+<ul><li><b>«actos en contra de bienes o servicios… alarma, temor o terror»</b>, sin fondos → <b>terrorismo</b> (CPF 139). Es el distractor.</li><li><b>«asistencia, apoyo o conspiración»</b> y <b>«lícitos como ilícitos»</b> → <b>GAFILAT</b>.</li><li><b>«aportación, financiación o recaudación»</b> + «alarma, temor o terror» → <b>CNBV</b>.</li><li><b>«Al que… aporte o recaude»</b>, la lista de delitos y «territorio nacional o en el extranjero» → <b>CPF</b> (139 Quáter).</li><li><b>«Los países deben tipificar… Convenio Internacional para la Represión de la Financiación del Terrorismo»</b> → <b>GAFI</b> (R.5).</li></ul>
+<p class="nota">Las definiciones «del GAFILAT» y «de la CNBV» son las que usan las clases y el simulador; no están en la bibliografía del temario. La de la CNBV toma el fin del terrorismo (alarma, temor o terror) y le pega el dinero.</p>
+<h3>Para un caso, cuatro preguntas</h3>
+<ol><li>¿Hay <b>dinero o recursos</b> y la persona <b>sabe</b> que van para terroristas o para un delito de la lista? → <b>FT</b>.</li><li>¿Es el <b>acto violento</b> mismo? → <b>terrorismo</b>.</li><li>¿Esconde a alguien? → <b>encubrimiento</b>: si escondió a un terrorista, 139 Bis; si escondió a quien financió, 139 Quinquies.</li><li>¿La pregunta es <b>de dónde viene</b> el dinero? → <b>lavado</b>.</li></ol>
+<p class="nota">Fuentes: CPF, última reforma DOF 13-03-2026, arts. 139 a 139 Quinquies, 148 Bis a 148 Quáter y 400 Bis; GAFI, Recomendaciones dic-2025 (GAFILAT): R.5, pág. 12, y su Nota Interpretativa, párrs. 5 y 6, pág. 47. La regla «nacional y FT = UMA», los delatores y las cuatro preguntas son criterio didáctico de 360Educa.</p>`;
+
 /* De qué módulo y documento es cada serie. */
 const DOCS={
  gafi:{mod:"Módulo 1",doc:"Las Recomendaciones del GAFI",ver:"Traducción al español de diciembre de 2025 (GAFILAT)"},
+ ft:{mod:"Módulo 1",doc:"Refuerzo · financiamiento al terrorismo",ver:"CPF, última reforma DOF 13-03-2026 · GAFI R.5 y su Nota Interpretativa (dic-2025)",lectura:FT_LECTURA},
  ley:{mod:"Módulo 2",doc:"LFPIORPI · artículo 17, actividades vulnerables",ver:"Texto vigente, última reforma DOF 16-07-2025"},
  lia:{mod:"Módulo 3",doc:"Lineamientos para la elaboración del Informe de Auditoría PLD/FT · Octavo A",ver:"DOF 18-oct-2021"},
  rs:{mod:"Módulo 3",doc:"Reglamento de Supervisión de la CNBV",ver:"Compilación CNBV con la reforma del 21-jul-2021"},
  enr:{mod:"Módulo 3",doc:"Evaluación Nacional de Riesgos 2023 · niveles de riesgo",ver:"SHCP-UIF, noviembre de 2023, apartado XI"}
 };
-const DOC_DE={"r9-23":"gafi","r26-35":"gafi","r1-40":"gafi","m2-fr":"ley","m2-umb":"ley","m3-fr":"lia","m3-inc":"lia","m3-tit":"rs","enr-f":"enr","enr-sf":"enr","enr-av":"enr","enr-rf":"enr"};
+const DOC_DE={"r9-23":"gafi","r26-35":"gafi","r1-40":"gafi","ft-ld":"ft","ft-pz":"ft","ft-ls":"ft","ft-pn":"ft","ft-fu":"ft","m2-fr":"ley","m2-umb":"ley","m3-fr":"lia","m3-inc":"lia","m3-tit":"rs","enr-f":"enr","enr-sf":"enr","enr-av":"enr","enr-rf":"enr"};
 const docOf=d=>DOCS[DOC_DE[d.id]];
 const DECKS=[
  {id:"r9-23",n:"R.9 a R.23",sub:"Medidas preventivas",items:rng(9,23)},
  {id:"r26-35",n:"R.26 a R.35",sub:"Autoridades",items:rng(26,35)},
  {id:"r1-40",n:"R.1 a R.40",sub:"Las 40",items:R},
+ ...FTD,
  ...M2,
  ...M3,
  ...ENR
@@ -378,8 +492,18 @@ function normNum(s){return norm(s).replace(/\b(uma|veces|valor|diario|mensual|de
 function normLvl(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s*([\/-])\s*/g,"$1").replace(/\s+/g," ").trim()}
 function variants(c){const v=[c.t].concat(c.alt?[c.alt]:[],c.alts||[]); v.slice().forEach(x=>{if(/\(.*\)/.test(x))v.push(x.replace(/\s*\([^)]*\)\s*/g," "))}); return v}
 /* ok | near (ortografía) | warn (vale, con aviso) | bad (con o sin aviso) | empty */
+function penParse(s){const t=s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  const nums=(t.replace(/(\d)[,.](?=\d{3}\b)/g,"$1").match(/\d+/g)||[]).map(Number);
+  const unit=/uma|veces/.test(t)?"uma":/dia|\bdm\b|d\.m/.test(t)?"dm":"";return {nums,unit}}
+function penGrade(typed,p){const g=penParse(typed);
+  if(g.nums.join("-")!==p.nums.join("-"))return {s:"bad"};
+  if(!p.unit)return {s:"ok"};
+  if(!g.unit)return {s:"bad",msg:"Los números están bien, pero falta la unidad: ¿días multa o veces la UMA? Ahí está la trampa."};
+  if(g.unit!==p.unit)return {s:"bad",msg:p.unit==="uma"?"Números bien, unidad mal: aquí es en veces la UMA (139 y FT), no días multa.":"Números bien, unidad mal: aquí es en días multa, no veces la UMA. Sólo el 139 y el FT van en UMA."};
+  return {s:"ok"}}
 function grade(typed,c){
   if(!norm(typed))return {s:"empty"};
+  if(c.pen)return penGrade(typed,c.pen);
   if(c.lvl){const t=normLvl(typed); for(const [w,msg] of Object.entries(c.warns||{})){if(t===normLvl(w))return {s:"bad",msg:msg.replace(/^!/,"")}} return [c.t].concat(c.alts||[]).some(v=>normLvl(v)===t)?{s:"ok"}:{s:"bad"}}
   if(c.num){const t=normNum(typed); for(const [w,msg] of Object.entries(c.warns||{})){if(t===normNum(w))return msg.startsWith("!")?{s:"bad",msg:msg.slice(1)}:{s:"warn",msg}} return t===normNum(c.t)?{s:"ok"}:{s:"bad"}}
   for(const [w,msg] of Object.entries(c.warns||{})){ if(wordsMatch(typed,w)){ return msg.startsWith("!")?{s:"bad",msg:msg.slice(1)}:{s:"warn",msg} } }
@@ -388,7 +512,7 @@ function grade(typed,c){
 }
 function hint(t){return t.split(/\s+/).map(w=>w.length<=2?w:w[0]+"·".repeat(Math.min(w.length-1,12))).join("  ")}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
-function cards(items){return items.map(x=>x.w2!==undefined?{k:x.k,nom:x.nom,g:x.g,pair:true,num:true,full:x.t,parts:[{t:x.w,warns:{},num:true},{t:x.w2,warns:x.warns2,num:true}]}:mode==="palabra"?{k:x.k,nom:x.nom,wide:!!deck.wide,lvl:x.lvl,g:x.g,t:x.w,alts:x.alts,warns:x.warns,full:x.t,dud:x.dud}:{k:x.k,g:x.g,t:x.t,alt:x.alt,alts:[],warns:{}})}
+function cards(items){return items.map(x=>x.parts?{k:x.k,nom:x.nom,g:x.g,pair:true,full:x.t,parts:x.parts}:x.w2!==undefined?{k:x.k,nom:x.nom,g:x.g,pair:true,num:true,full:x.t,parts:[{t:x.w,warns:{},num:true},{t:x.w2,warns:x.warns2,num:true}]}:mode==="palabra"?{k:x.k,nom:x.nom,wide:!!deck.wide,lvl:x.lvl,g:x.g,t:x.w,alts:x.alts,warns:x.warns,full:x.t,dud:x.dud}:{k:x.k,g:x.g,t:x.t,alt:x.alt,alts:[],warns:{}})}
 
 function chipRow(id,opts,cur,onPick){const box=$(id);box.innerHTML="";opts.forEach(o=>{const b=document.createElement("button");b.className="chip";b.type="button";
   b.setAttribute("aria-pressed",String(o.v===cur));b.innerHTML=o.html;b.disabled=!!o.off;b.onclick=()=>onPick(o.v);box.appendChild(b)})}
@@ -407,7 +531,7 @@ function renderControls(){
 }
 function newRound(items){
   renderControls(); round=items?round+1:1;
-  {const D=docOf(deck); $("#doctitle").innerHTML=`<span class="eyebrow">${esc(D.mod)} · ${esc(deck.n)}</span><h2>${esc(D.doc)}</h2><span class="note">${esc(D.ver)}</span>`;}
+  {const D=docOf(deck); $("#doctitle").innerHTML=`<span class="eyebrow">${esc(D.mod)} · ${esc(deck.n)}</span><h2>${esc(D.doc)}</h2><span class="note">${esc(D.ver)}</span>`+(D.lectura?`<details class="lectura" ${items?"":"open"}><summary>Léelo primero · 5 minutos</summary>${D.lectura}</details>`:"");}
   list=cards(items||deck.items); if($("#shuffle").checked)list.sort(()=>Math.random()-.5);
   checked=false; renderSheet(); renderBar();
 }
@@ -415,7 +539,7 @@ function fieldHtml(id,t,label){const tr=level===1?esc(t):level===2?esc(hint(t)):
   return `<div class="field"><div class="trace" aria-hidden="true">${tr}</div><input class="inp" id="${id}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="${esc(label)}"></div>`}
 function renderSheet(){
   let html="",lastG=null; const showG=level<3&&!$("#shuffle").checked;
-  if(list[0]&&list[0].pair)html+=`<div class="row pair head"><div class="pairs"><span class="lab">Identificación</span><span class="lab">Aviso</span></div></div>`;
+  if(list[0]&&list[0].pair)html+=`<div class="row pair head"><div class="pairs">${(deck.labels||["Identificación","Aviso"]).map(l=>`<span class="lab">${esc(l)}</span>`).join("")}</div></div>`;
   list.forEach((c,ix)=>{
     if(showG&&c.g!==lastG){html+=`<div class="sec">${esc(c.g)}</div>`;lastG=c.g}
     const body=c.pair?`<div class="pairs">${fieldHtml("in"+ix+"a",c.parts[0].t,c.k+" identificación")}${fieldHtml("in"+ix+"b",c.parts[1].t,c.k+" aviso")}</div>`:fieldHtml("in"+ix,c.t,c.k);
@@ -446,8 +570,8 @@ function checkAll(){
     const row=$("#row"+ix), out=$("#res"+ix); let good, html;
     if(c.pair){
       const rs=c.parts.map((p,j)=>{const el=$("#in"+ix+"ab"[j]); el.readOnly=true; el.previousElementSibling.style.visibility="hidden"; const r=grade(el.value,p); el.parentElement.classList.add(isGood(r)?"f-ok":"f-bad"); return r});
-      good=rs.every(isGood);
-      html=`<span class="mark">${good?"✓":"✗"}</span>`+`<span class="full">${esc(c.k)}${c.nom?" · "+esc(c.nom):""}</span>`+(good?"":`<span class="ans">Identificación: ${esc(c.parts[0].t)} · Aviso: ${esc(c.parts[1].t)}</span>`)+(c.full?`<span class="full">${esc(c.full)}</span>`:"")+rs.filter(r=>r.msg).map(r=>`<span class="msg">${esc(r.msg)}</span>`).join("");
+      good=rs.every(isGood); const LB=deck.labels?deck.labels.map(x=>x.replace(/ \(.*\)/,"")):["Identificación","Aviso"];
+      html=`<span class="mark">${good?"✓":"✗"}</span>`+`<span class="full">${esc(c.k)}${c.nom?" · "+esc(c.nom):""}</span>`+(good?"":`<span class="ans">${esc(LB[0])}: ${esc(c.parts[0].t)} · ${esc(LB[1])}: ${esc(c.parts[1].t)}</span>`)+(c.full?`<span class="full">${esc(c.full)}</span>`:"")+rs.filter(r=>r.msg).map(r=>`<span class="msg">${esc(r.msg)}</span>`).join("");
     } else {
       const el=$("#in"+ix), r=grade(el.value,c); el.readOnly=true; el.previousElementSibling.style.visibility="hidden";
       good=isGood(r);

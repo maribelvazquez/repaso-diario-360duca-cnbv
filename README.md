@@ -5,6 +5,7 @@ Repaso escrito para la certificación CNBV PLD/FT: ves el número y escribes de 
 ## Series
 - **Módulo 1 · Recomendaciones del GAFI:** R.9–R.23, R.26–R.35 y R.1–R.40. Nombres oficiales: traducción al español de diciembre de 2025 (GAFILAT), índice págs. 6–8 y encabezados págs. 12–33.
 - **Módulo 3:** fracciones I–XIV y fr. III incisos a)–k) del Octavo A de los Lineamientos del Informe de Auditoría (DOF 18-oct-2021); títulos I–X del Reglamento de Supervisión de la CNBV (reforma 21-jul-2021). Cotejado por el coordinador del Módulo 3 (13-oct-2026).
+- **Módulo 1 · Refuerzo FT:** lectura de 5 minutos y cinco series (¿LD o FT?, 139 Quáter pieza por pieza, lista 5 + 1, penas con su unidad, ¿de quién es el texto?). CPF, última reforma DOF 13-03-2026, y GAFI R.5 con su Nota Interpretativa (dic-2025).
 - **ENR 2023 (Módulo 3):** 37 factores, 23 sectores del SF, 18 sectores de AV y 6 riesgos finales, nivel 2023 (apartado XI). Cotejado por el coordinador del Módulo 3 (17-oct-2026).
 - **Módulo 2:** LFPIORPI art. 17, las 17 fracciones (con V Bis) y umbrales de identificación y Aviso en veces la UMA; texto vigente con la reforma DOF 16-07-2025. Cotejado por el coordinador del Módulo 2 (13-oct-2026).
 
@@ -17,3 +18,4 @@ Un solo archivo, `index.html`, sin dependencias salvo Google Fonts. El historial
 - v6 (17-oct-2026): nombre corto junto a cada clave de «M2 · Umbrales» (claves de la serie de umbrales · v2, coordinador del M2). Cifras sin cambio.
 - v7 (17-oct-2026): cuatro series de la ENR 2023 (factores, sectores SF, sectores AV y riesgos finales). «MB» de factor y «M-B» de sector se califican distinto.
 - v8 (17-oct-2026): las series se agrupan por módulo y documento, y arriba de cada lista se ve de qué módulo y documento es.
+- v9 (17-oct-2026): refuerzo de financiamiento al terrorismo en el Módulo 1.
