@@ -515,18 +515,18 @@ const REP_TARJETA=`
 <p class="nota"><span class="tag clase">Criterio de 360Educa</span> Las DCG dicen quién reporta qué, pero no dicen por qué. Esta lógica es criterio de 360Educa para estudiar; los plazos de las series sí salen del texto de cada DCG.</p>
 <p class="big">Pregunta guía: ¿qué hace este sujeto con el dinero?</p>
 <ul>
-<li><b>¿Recibe efectivo?</b> Entonces tiene <b>Relevantes</b>, trimestral. Todos lo tienen menos Asesores en inversiones, que sólo asesora.</li>
+<li><b>¿Recibe efectivo?</b> Entonces tiene <b>Relevantes</b>, trimestral. Todos lo tienen menos Asesores en inversiones, que sólo asesora (su DCG no define ni reporta Operaciones Relevantes).</li>
 <li><b>¿Recibe dólares en billete?</b> Entonces tiene <b>efectivo en dólares</b>, trimestral, porque es de la misma familia «efectivo» que Relevantes.
- <ul><li><b>No lo tienen:</b> SOFOM, Asesores, Fondos y Transmisores.</li><li><b>SOCAP:</b> sólo cuenta las compras.</li><li><b>Centros cambiarios:</b> sólo las compras de más de 1,000 USD.</li><li><b>ITF:</b> cualquier moneda extranjera, desde 500 USD.</li></ul></li>
+ <ul><li><b>Sí lo tienen</b> también Casas de bolsa (35ª), SOFIPO (37ª) y Uniones (27ª; sólo compras de Clientes desde 500 USD).</li><li><b>No lo tienen:</b> SOFOM, Asesores, Fondos y Transmisores.</li><li><b>SOCAP:</b> sólo cuenta las compras.</li><li><b>Centros cambiarios:</b> sólo las compras de más de 1,000 USD.</li><li><b>ITF:</b> cualquier moneda extranjera, desde 500 USD.</li></ul></li>
 <li><b>¿Manda dinero a otro país?</b> Entonces tiene <b>transferencias internacionales</b>.
- <ul><li>Es <b>el único reporte mensual</b>: 15 días hábiles después del último día hábil del mes. El dinero que cruza la frontera se mueve rápido y en volumen.</li><li><b>No lo tienen:</b> SOFOM, que sólo presta; Asesores; Fondos; Uniones, y <b>Centros cambiarios</b>, que cambian billetes en ventanilla pero no envían dinero afuera.</li></ul></li>
+ <ul><li>Es <b>el único reporte mensual</b>: 15 días hábiles después del último día hábil del mes. El dinero que cruza la frontera se mueve rápido y en volumen.</li><li><b>Sí lo tienen</b> también Casas de bolsa (36ª) y SOFIPO (38ª).</li><li><b>No lo tienen:</b> SOFOM, que sólo presta; Asesores; Fondos; Uniones, y <b>Centros cambiarios</b>, que cambian billetes en ventanilla pero no envían dinero afuera.</li></ul></li>
 <li><b>Lo que hay que memorizar porque sólo uno lo tiene:</b>
  <ul><li><b>Cheques de caja: sólo Bancos.</b> Sólo los bancos los expiden.</li><li><b>Montos totales de divisas: sólo Centros cambiarios.</b> Informan con qué instituciones colocaron el saldo neto de los billetes que compraron (49ª). Es como preguntarles: «¿a dónde fueron a parar los dólares?».</li></ul></li>
-<li><b>Lo nuevo:</b> el <b>informe cuantitativo</b> (anual, últimos 10 d.h. de abril) lo trajeron las reformas de 2023 y 2024. Lo tienen Bancos, Asesores, Uniones, Centros cambiarios y Transmisores. Los reformados en 2021 (SOFOM, Casas de bolsa, Fondos, SOCAP, SOFIPO), Casas de cambio e ITF no lo tienen.</li>
+<li><b>Lo nuevo:</b> el <b>informe cuantitativo</b> (anual, últimos 10 d.h. de abril) lo trajeron las reformas de 2023 y 2024. Lo tienen Bancos (60ª Bis), Asesores (37ª Bis), Uniones (52ª Bis), Centros cambiarios (48ª Bis) y Transmisores (52ª Bis). Los reformados en 2021 (SOFOM, Casas de bolsa, Fondos, SOCAP, SOFIPO), Casas de cambio e ITF no lo tienen.</li>
 </ul>
 <h3>Dos reglas que desbloquean todo</h3>
 <ol>
-<li><b>«Mensual = transferencias; todo lo demás, trimestral»</b> (y el cuantitativo, anual). Excepción: Bancos manda cada mes su lista de personas morales con dólares en efectivo.</li>
+<li><b>«Mensual = transferencias; todo lo demás, trimestral»</b> (y el cuantitativo, anual). Excepción: Bancos manda «a más tardar dentro de los diez primeros días hábiles de cada mes calendario, la lista actualizada de los Clientes personas morales con los que realice operaciones con dólares de los Estados Unidos de América en efectivo» (DCG art. 115 LIC, 33ª Bis 2). Ningún otro sujeto tiene esa lista.</li>
 <li><b>«Primeros, salvo S-C-T»:</b> los trimestrales van en los <b>10 primeros</b> d.h. de enero, abril, julio y octubre. <b>SOFOM, Centros cambiarios y Transmisores</b> van en los <b>10 últimos</b>. Gancho: son sujetos a los que la CNBV supervisa sobre todo en PLD (la norma no da esa razón).</li>
 </ol>
 <h3>Avisos (otra familia, no son reportes periódicos)</h3>
@@ -1041,11 +1041,13 @@ function simShuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.ran
 function simPick(pool,n,share){
   const s=simSeen(),tier=q=>!s[q.id]?0:s[q.id].w?1:2+Math.min(s[q.id].n||1,9);
   const ord=simShuffle(pool.slice()).sort((x,y)=>tier(x)-tier(y));
-  const out=[],add=q=>{if(out.length<n&&!out.includes(q))out.push(q)};
+  const out=[],pk=q=>{const m=/^(M\d-\d+)-(\d+)$/.exec(q.id);return m?[m[1],+m[2]]:null},
+  par=q=>{const a=pk(q);return a&&out.some(o=>{const b=pk(o);return b&&b[0]===a[0]&&Math.abs(b[1]-a[1])===1})},
+  add=q=>{if(out.length<n&&!out.includes(q)&&!par(q))out.push(q)},addAny=q=>{if(out.length<n&&!out.includes(q))out.push(q)};
   ord.filter(q=>q.foco).slice(0,Math.ceil(n*2/3)).forEach(add);           /* foco: hasta 2 de cada 3 */
   const wantRC=Math.round(n*share);let rc=out.filter(q=>RC(q.tipo)).length;
   for(const q of ord){if(rc>=wantRC)break;if(RC(q.tipo)&&!out.includes(q)){add(q);rc++}}
-  ord.forEach(add);
+  ord.forEach(add);ord.forEach(addAny);
   return simShuffle(out)}
 function simBuild(mods){
   const items=[];
