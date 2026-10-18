@@ -43,6 +43,19 @@ h1{font-family:var(--f-name);font-weight:600;font-size:clamp(24px,5vw,32px);line
 .chip:disabled{opacity:.45;cursor:not-allowed}
 .chip small{font-family:var(--f-num);font-size:11px;opacity:.75;margin-left:6px}
 .chip:focus-visible,.btn:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mods{display:grid;gap:12px}
+.modcard{font:inherit;text-align:left;cursor:pointer;background:var(--sheet);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:grid;gap:4px}
+.modcard:hover{border-color:var(--accent)}
+.modcard .mn{font-family:var(--f-name);font-size:21px;font-weight:600}
+.modcard .md{font-size:13.5px;color:var(--muted)}
+.modcard .mc{font-family:var(--f-num);font-size:12px;color:var(--accent)}
+.crumb{display:flex;flex-wrap:wrap;align-items:center;gap:8px;position:sticky;top:0;z-index:5;background:var(--paper);padding-block:10px;margin-block:-10px;border-bottom:1px solid var(--line)}
+.back{font:inherit;font-size:14px;cursor:pointer;background:none;border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:5px 12px}
+.back:hover{border-color:var(--accent)}
+.crumb .where{font-size:13.5px;color:var(--muted);min-width:0}
+.crumb .where b{color:var(--ink);font-weight:600}
+.opts{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:end}
+.howto{font-size:13px;color:var(--muted);margin:0}
 .toggle{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
 .decks{display:grid;gap:12px}
 .dgroup{display:grid;gap:6px}
@@ -142,34 +155,41 @@ kbd{font-family:var(--f-num);font-size:11.5px;border:1px solid var(--line);borde
 </head>
 <body>
 <div class="wrap">
-  <header>
+  <nav class="crumb" id="crumb" hidden></nav>
+
+  <header id="home-head">
     <div class="eyebrow">Certificación CNBV PLD/FT · repaso de 10 minutos</div>
-    <h1>Una palabra por número, de corrido</h1>
-    <p class="lede">Llena toda la lista sin ver nada y revisa una sola vez al final. Las que falles las repites solas hasta que salgan.</p>
+    <h1>Repaso escrito diario</h1>
+    <p class="lede">Elige un módulo y luego una serie. Llenas toda la lista sin ver nada y revisas una sola vez al final.</p>
   </header>
 
-  <section class="controls" aria-label="Qué vas a repasar">
-    <div class="ctl"><span class="lab">Serie</span><div class="decks" id="decks"></div></div>
-    <div class="ctl"><span class="lab">Ayuda</span><div class="chips" id="levels"></div></div>
-    <div class="ctl"><span class="lab">Qué escribes</span><div class="chips" id="modes"></div></div>
-    <label class="toggle"><input type="checkbox" id="shuffle"> En desorden</label>
+  <section class="mods" id="mods" aria-label="Módulos"></section>
+
+  <section class="controls" id="pick" aria-label="Series del módulo" hidden>
+    <div class="decks" id="decks"></div>
   </section>
 
-  <div class="doctitle" id="doctitle" aria-live="polite"></div>
-  <section class="sheet" id="sheet" aria-label="Lista para llenar"></section>
-
-  <div class="bar" id="bar"></div>
+  <section id="practice" hidden style="display:grid;gap:20px">
+    <div class="opts">
+      <div class="ctl"><span class="lab">Ayuda</span><div class="chips" id="levels"></div></div>
+      <div class="ctl"><span class="lab">Qué escribes</span><div class="chips" id="modes"></div></div>
+      <label class="toggle"><input type="checkbox" id="shuffle"> En desorden</label>
+    </div>
+    <div class="doctitle" id="doctitle" aria-live="polite"></div>
+    <p class="howto"><kbd>Enter</kbd> o <kbd>Tab</kbd> pasa a la siguiente línea; en la última, <kbd>Enter</kbd> revisa todo.</p>
+    <section class="sheet" id="sheet" aria-label="Lista para llenar"></section>
+    <div class="bar" id="bar"></div>
+  </section>
 
   <section class="log" id="log"></section>
 
-  <footer>
-    <div><kbd>Enter</kbd> o <kbd>Tab</kbd> pasa a la siguiente línea. En la última, <kbd>Enter</kbd> revisa todo.</div>
+  <footer id="foot"><details><summary>Fuentes y cómo se califica</summary>
     <div>Recomendaciones: las palabras son tuyas (notas del 13-oct); las de R.1–8 y R.24–25 las propuse yo. Los nombres oficiales salen de Las Recomendaciones del GAFI, traducción al español de diciembre de 2025 (GAFILAT), índice págs. 6–8 y encabezados págs. 12–33.</div>
     <div>Módulo 2: LFPIORPI art. 17, texto vigente con la reforma DOF 16-07-2025, cotejado por el coordinador del M2; las palabras de las fracciones son propuestas suyas. Umbrales en veces el valor diario de la UMA; escribe el número o «siempre».</div>
     <div>Módulo 2: plazos de las DCG de cada sector, verificados por el coordinador del M2 contra el texto vigente de cada DCG; la lógica de la tarjeta es criterio de 360Educa.</div>
     <div>ENR 2023: niveles de riesgo cotejados contra el apartado XI de la ENR (SHCP-UIF, nov-2023) por el coordinador del M3. Factores: dos letras sin guion (AM o Alto/Medio). Sectores y riesgos finales: una etiqueta, con guion si es compuesta (M-B o Medio-Bajo). «MB» de factor y «M-B» de sector no se mezclan.</div>
     <div>Módulo 3: tus palabras, cotejadas por el coordinador del M3 contra los Lineamientos del Informe de Auditoría (DOF 18-oct-2021) y el Reglamento de Supervisión de la CNBV (reforma 21-jul-2021). Se califica sin importar acentos, mayúsculas ni puntuación.</div>
-  </footer>
+  </details></footer>
 </div>
 
 <script>
@@ -791,20 +811,20 @@ function chipRow(id,opts,cur,onPick){const box=$(id);box.innerHTML="";opts.forEa
   b.setAttribute("aria-pressed",String(o.v===cur));b.innerHTML=o.html;b.disabled=!!o.off;b.onclick=()=>onPick(o.v);box.appendChild(b)})}
 function renderControls(){
   const box=$("#decks"); box.innerHTML="";
-  [...new Set(DECKS.map(d=>DOC_DE[d.id]))].forEach(key=>{
+  [...new Set(DECKS.map(d=>DOC_DE[d.id]))].filter(key=>DOCS[key].mod===curMod).forEach(key=>{
     const D=DOCS[key], grp=document.createElement("div"); grp.className="dgroup";
-    grp.innerHTML=`<span class="dlab"><b>${esc(D.mod)}</b> · ${esc(D.doc)}</span><div class="chips"></div>`;
+    grp.innerHTML=`<span class="dlab"><b>${esc(D.doc)}</b></span><div class="chips"></div>`;
     const row=grp.querySelector(".chips");
     DECKS.filter(d=>DOC_DE[d.id]===key).forEach(d=>{const b=document.createElement("button");b.className="chip";b.type="button";
       b.setAttribute("aria-pressed",String(d===deck));b.innerHTML=esc(d.n)+"<small>"+(d.count||d.items.length)+"</small>";
-      b.onclick=()=>{deck=d;if(deck.palabra)mode="palabra";newRound()};row.appendChild(b)});
+      b.onclick=()=>{go("#"+d.id)};row.appendChild(b)});
     box.appendChild(grp)});
   chipRow("#levels",[{v:1,html:"Calcar"},{v:2,html:"Primera letra"},{v:3,html:"Nada"}],level,v=>{level=v;newRound()});
   chipRow("#modes",[{v:"palabra",html:"Una palabra"},{v:"nombre",html:"Nombre completo",off:!!deck.palabra}],mode,v=>{mode=v;newRound()});
 }
 function newRound(items){
   renderControls(); round=items?round+1:1;
-  {const D=docOf(deck); $("#doctitle").innerHTML=`<span class="eyebrow">${esc(D.mod)} · ${esc(deck.n)}</span><h2>${esc(D.doc)}</h2><span class="note">${esc(D.ver)}</span>`+(D.lecturaHtml?D.lecturaHtml():"")+(D.lectura?`<details class="lectura" ${items?"":"open"}><summary>Léelo primero · 5 minutos</summary>${D.lectura}</details>`:"");}
+  {const D=docOf(deck); $("#doctitle").innerHTML=`<span class="eyebrow">${esc(D.mod)} · ${esc(deck.n)}</span><h2>${esc(D.doc)}</h2><span class="note">${esc(D.ver)}</span>`+(D.lecturaHtml?D.lecturaHtml():"")+(D.lectura?`<details class="lectura"><summary>Léelo primero · 5 minutos</summary>${D.lectura}</details>`:"");}
   if(deck.kind){checked=false;renderSpecial();return}
   list=cards(items||deck.items); if($("#shuffle").checked)list.sort(()=>Math.random()-.5);
   checked=false; renderSheet(); renderBar();
@@ -869,7 +889,24 @@ function renderLog(){
    ${h.slice(0,10).map(x=>`<tr><td>${esc(x.d)}</td><td>${esc(x.deck)}</td><td>${lv[x.level]||x.level}</td><td class="n">${x.ok} / ${x.n}</td></tr>`).join("")}</tbody></table></div>`;
 }
 $("#shuffle").addEventListener("change",()=>newRound());
-newRound(); renderLog();
+function modsOf(){const m={};DECKS.forEach(d=>{const D=docOf(d);(m[D.mod]=m[D.mod]||{docs:[],n:0}).n++;if(!m[D.mod].docs.includes(D.doc))m[D.mod].docs.push(D.doc)});return m}
+function renderMods(){const m=modsOf();$("#mods").innerHTML="";Object.keys(m).forEach(k=>{const b=document.createElement("button");b.className="modcard";b.type="button";
+  b.innerHTML=`<span class="mn">${esc(k)}</span><span class="md">${m[k].docs.map(esc).join(" · ")}</span><span class="mc">${m[k].n} series</span>`;
+  b.onclick=()=>go("#"+modSlug(k));$("#mods").appendChild(b)})}
+const modSlug=k=>"m"+k.replace(/\D/g,"");
+let curMod="Módulo 1";
+function go(h){if(location.hash===h)route();else location.hash=h}
+function show(v){$("#home-head").hidden=v!=="home";$("#mods").hidden=v!=="home";$("#log").hidden=v!=="home";$("#foot").hidden=v!=="home";
+  $("#pick").hidden=v!=="mod";$("#practice").hidden=v!=="practice";$("#practice").style.display=v==="practice"?"grid":"none";$("#crumb").hidden=v==="home"}
+function crumb(html,backTo,backLabel){$("#crumb").innerHTML=`<button class="back" type="button" id="backbtn">← ${esc(backLabel)}</button><span class="where">${html}</span>`;$("#backbtn").onclick=()=>go(backTo)}
+function route(){const h=location.hash.slice(1);
+  const d=DECKS.find(x=>x.id===h);
+  if(d){deck=d;if(deck.palabra)mode="palabra";curMod=docOf(d).mod;show("practice");crumb(`<b>${esc(curMod)}</b> · ${esc(d.n)}`,"#"+modSlug(curMod),"Series");newRound();window.scrollTo(0,0);return}
+  const k=Object.keys(modsOf()).find(k=>modSlug(k)===h);
+  if(k){curMod=k;show("mod");crumb(`<b>${esc(k)}</b> · elige una serie`,"#","Módulos");renderControls();window.scrollTo(0,0);return}
+  show("home");renderMods();renderLog();window.scrollTo(0,0)}
+window.addEventListener("hashchange",route);
+route();
 </script>
 </body>
 </html>
