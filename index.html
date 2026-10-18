@@ -631,6 +631,61 @@ const FTD=[
  {id:"ft-pn",n:"Penas: prisión y multa",sub:"",palabra:true,pair:true,labels:["Prisión (años)","Multa (con unidad)"],items:FT_PENAS},
  {id:"ft-fu",n:"¿De quién es el texto?",sub:"",palabra:true,wide:true,items:FT_FUENTE}
 ];
+
+/* Refuerzo · convenciones internacionales (18-oct). Fuentes: GAFI dic-2025: R.3 y NI R.3 párr. 1, R.4, R.5, R.36, NI R.6 nota al párr. 2 y Metodología crit. 36.1; ENR 2023 cap. III. Cotejado en «Libro cap 1.2.1 · v1» del proyecto. Lo marcado «Clase» es criterio de 360Educa. */
+const CV=[
+ ["Viena","Convención de las Naciones Unidas contra el Tráfico Ilícito de Estupefacientes y Sustancias Psicotrópicas","1988","lavado","debe"],
+ ["Convenio FT","Convenio Internacional para la Represión de la Financiación del Terrorismo","1999","FT","debe"],
+ ["Palermo","Convención de las Naciones Unidas contra la Delincuencia Transnacional Organizada","2000","lavado","debe"],
+ ["Mérida","Convención de las Naciones Unidas contra la Corrupción","2003","corrupción","debe"],
+ ["Crimen Cibernético","Convención del Consejo de Europa sobre el Crimen Cibernético","2001","—","exhorta"],
+ ["Interamericana","Convención Interamericana contra el Terrorismo","2002","—","exhorta"],
+ ["Consejo de Europa 2005","Convenio del Consejo de Europa sobre Blanqueo, Detección, Embargo y Decomiso de los Productos de un Delito y sobre el Financiamiento del Terrorismo","2005","—","exhorta"]
+];
+const CV_ALTS={"Viena":["convencion de viena"],"Palermo":["convencion de palermo"],"Mérida":["merida","convencion de merida","uncac"],"Convenio FT":["convenio","financiacion del terrorismo","convenio de financiacion del terrorismo","financiamiento del terrorismo","convenio 1999"],"Crimen Cibernético":["cibernetico","crimen cibernetico","ciberdelincuencia","budapest"],"Interamericana":["interamericana contra el terrorismo"],"Consejo de Europa 2005":["consejo de europa","varsovia","blanqueo"]};
+const CVG="R.36 · instrumentos internacionales";
+const CONV_NOM=CV.map(([k,n,y])=>ftw(String(CV.indexOf(CV.find(c=>c[0]===k))+1),n,k,"R.36 ("+y+")",CV_ALTS[k]||[],k==="Viena"?{"palermo":"!Palermo es la de delincuencia transnacional organizada. Estupefacientes y psicotrópicas = Viena."}:k==="Palermo"?{"viena":"!Viena es la de estupefacientes. Delincuencia transnacional organizada = Palermo."}:{}));
+const CONV_ANIO=CV.map(([k,n,y])=>({k,nom:n,w:y,t:"R.36",g:"",alts:[],warns:k==="Convenio FT"?{"2001":"!2001 es la Res. 1373 y la Convención de Crimen Cibernético. El Convenio de Financiación del Terrorismo es de 1999."}:k==="Palermo"?{"1988":"!1988 es Viena. Palermo es de 2000."}:k==="Viena"?{"2000":"!2000 es Palermo. Viena es de 1988."}:{},num:true}));
+const CONV_PARA=CV.slice(0,4).map(([k,n,y,para])=>ftw(k,n,para,k==="Viena"||k==="Palermo"?"Base del delito de lavado: NI R.3 párr. 1 («Los países deben tipificar el lavado de activos con base en… Viena y… Palermo»).":k==="Convenio FT"?"Base del delito de FT: R.5 («en base al Convenio Internacional para la Represión de la Financiación del Terrorismo»). No es la Res. 1373.":"Es la de corrupción (su nombre). En las Recomendaciones aparece en la R.4 (decomiso) y la R.36.",para==="lavado"?["ld","lavado de activos","lavado de dinero","la"]:para==="FT"?["financiamiento del terrorismo","financiamiento al terrorismo"]:["anticorrupcion"],para==="lavado"?{"ft":"!El FT se tipifica con base en el Convenio de 1999 (R.5), no en Viena ni Palermo."}:para==="FT"?{"lavado":"!Lavado es Viena y Palermo (R.3). El Convenio de 1999 es la base del FT (R.5)."}:{}));
+const CONV_FUERZA=CV.map(([k,n,y,p,f])=>ftw(k,n,f,f==="debe"?"R.36: «deben tomar medidas inmediatas para ser parte de, e implementar a plenitud». Metodología 36.1: «Los países deben ser parte».":"R.36: «Cuando corresponda, se exhorta también a los países a ratificar e implementar».",f==="debe"?["deben","obligatoria","obligatorio"]:["exhortada","se exhorta","exhortan","cuando corresponda"]));
+const CONV_REC=[
+ ftw("1","Tipificar el lavado de activos con base en Viena y Palermo","R.3","NI R.3 párr. 1.",["r 3","3"],{"r 5":"!La R.5 es el FT, con base en el Convenio de 1999."}),
+ ftw("2","Tipificar el financiamiento del terrorismo con base en el Convenio de 1999","R.5","R.5: «en base al Convenio Internacional para la Represión de la Financiación del Terrorismo».",["r 5","5"],{"r 6":"!La R.6 son las sanciones financieras (1267 y 1373), no la tipificación.","r 3":"!La R.3 es el lavado (Viena y Palermo)."}),
+ ftw("3","Decomiso y medidas provisionales «tomando en cuenta» Viena, Palermo, Mérida y el Convenio de 1999","R.4","R.4: menciona las cuatro.",["r 4","4"],{"r 38":"!La R.38 es asistencia legal mutua para congelar y decomisar a petición de otro país."}),
+ ftw("4","Ser parte de las cuatro y exhorto a ratificar las otras tres","R.36","R.36 · Instrumentos internacionales.",["r 36","36"]),
+ ftw("5","Viena, Palermo y el Convenio de 1999 traen obligaciones de congelar, incautar y decomisar que existen aparte de las sanciones financieras","R.6","NI R.6, nota al párr. 2: esas obligaciones «existen por separado y aparte» de la R.6.",["r 6","6","ni r 6","ni r6"])
+];
+const CONV_DEF=[
+ ftw("1","Definición de lavado de bienes que proceden del narcotráfico (tráfico ilícito de estupefacientes)","Viena","Clase: la bibliografía no trae el texto de la convención; el delator es el alcance de su nombre: estupefacientes y sustancias psicotrópicas.",["convencion de viena"],{"palermo":"!Palermo es delincuencia organizada: bienes «producto del delito». Narcotráfico = Viena."}),
+ ftw("2","Definición de lavado de bienes «producto del delito», en el marco de la delincuencia organizada","Palermo","Clase: la bibliografía no trae el texto; el delator es el alcance de su nombre: delincuencia transnacional organizada (cualquier delito, no sólo drogas).",["convencion de palermo"],{"viena":"!Viena se limita al narcotráfico. «Producto del delito» en general = Palermo."}),
+ ftw("3","«Proceso a través del cual es encubierto el origen de los fondos generados mediante el ejercicio de algunas actividades ilegales…»","CNBV","VSPP de la CNBV (2019). Delatores: «proceso» y la lista de actividades ilegales más comunes.",["vspp","cnbv vspp"]),
+ ftw("4","«Al que por sí o por interpósita persona… adquiera, enajene, administre, custodie, posea, cambie, convierta, deposite…»","CPF","CPF art. 400 Bis. Delatores: «Al que», «por sí o por interpósita persona» y la lista de verbos.",["400 bis","cpf 400 bis","art 400 bis"]),
+ ftw("5","«Los países deben tipificar el lavado de activos con base en la Convención de Viena y la Convención de Palermo»","GAFI","GAFI R.3 y su NI párr. 1. Delator: «Los países deben».",["r 3","gafi r 3","r3"])
+];
+const CONV_LECTURA=`
+<p class="big">Son siete. Cuatro <b>obligatorias</b> (los países <b>deben</b> ser parte) y tres <b>exhortadas</b> (se les exhorta «cuando corresponda»). Todo sale de la <b>R.36</b>.</p>
+<table><thead><tr><th>Apodo</th><th>Nombre oficial</th><th>Año</th><th>Para qué en el GAFI</th></tr></thead><tbody>
+<tr><td><b>Viena</b></td><td>Convención de las Naciones Unidas contra el Tráfico Ilícito de Estupefacientes y Sustancias Psicotrópicas</td><td>1988</td><td>Base del delito de <b>lavado</b> (R.3)</td></tr>
+<tr><td><b>Convenio FT</b></td><td>Convenio Internacional para la Represión de la Financiación del Terrorismo</td><td>1999</td><td>Base del delito de <b>FT</b> (R.5)</td></tr>
+<tr><td><b>Palermo</b></td><td>Convención de las Naciones Unidas contra la Delincuencia Transnacional Organizada</td><td>2000</td><td>Base del delito de <b>lavado</b> (R.3)</td></tr>
+<tr><td><b>Mérida</b></td><td>Convención de las Naciones Unidas contra la Corrupción</td><td>2003</td><td><b>Corrupción</b>; aparece en la R.4 y la R.36</td></tr>
+<tr><td colspan="4" class="nota">Exhortadas («cuando corresponda»): Consejo de Europa sobre el <b>Crimen Cibernético</b>, 2001 · <b>Interamericana</b> contra el Terrorismo, 2002 · Consejo de Europa sobre Blanqueo… y Financiamiento del Terrorismo, <b>2005</b>.</td></tr>
+</tbody></table>
+<h3>Cuatro frases que te salvan</h3>
+<ol><li><b>Lavado = Viena + Palermo</b> (R.3). <b>FT = el Convenio de 1999</b> (R.5). <b>Decomiso = las cuatro</b> (R.4). <b>Ser parte = las cuatro</b> (R.36).</li>
+<li><b>Viena es la de drogas; Palermo, la del crimen organizado; Mérida, la de corrupción.</b> Si la definición habla de <b>narcotráfico</b>, es Viena; si dice <b>«producto del delito»</b> en general, es Palermo. <span class="tag clase">Clase</span></li>
+<li>El de 1999 es <b>«Convenio»</b>, no «Convención», y <b>no es la Resolución 1373</b>: la 1373 es del Consejo de Seguridad y sirve para <b>designar</b> (R.6), no para tipificar.</li>
+<li>Años en orden: <b>88 · 99 · 00 · 03</b> las obligatorias; <b>01 · 02 · 05</b> las exhortadas. <span class="tag clase">Clase</span></li></ol>
+<p class="ojo"><b>Trampa de nombres:</b> la ENR 2023 escribe «Sustancias <b>Sicotrópicas</b>» y «Delincuencia <b>Organizada Transnacional</b>»; las Recomendaciones, «Psicotrópicas» y «Transnacional Organizada». Es la misma convención.</p>
+<p class="nota">Las definiciones de lavado «de Viena» y «de Palermo» que se leen en clase no vienen en la bibliografía; aquí se reconocen por el alcance de su nombre. Que Mérida se adoptó en México (2003, vigor 2005) está en la Guía Anticorrupción, apartado I.1.1, fuera del I.1.3 que cita el temario. Fuentes: GAFI dic-2025 R.3, NI R.3 párr. 1, R.4, R.5, R.36, NI R.6 nota al párr. 2, Metodología crit. 36.1; ENR 2023 cap. III.</p>`;
+const CONVD=[
+ {id:"cv-nom",n:"¿Cuál es? (apodo)",sub:"",palabra:true,wide:true,items:CONV_NOM},
+ {id:"cv-anio",n:"Año",sub:"",palabra:true,wide:true,num:true,items:CONV_ANIO},
+ {id:"cv-para",n:"¿Para qué delito?",sub:"",palabra:true,wide:true,items:CONV_PARA},
+ {id:"cv-fz",n:"¿Debe o se exhorta?",sub:"",palabra:true,wide:true,items:CONV_FUERZA},
+ {id:"cv-rec",n:"¿Qué Recomendación?",sub:"",palabra:true,wide:true,items:CONV_REC},
+ {id:"cv-def",n:"¿De quién es la definición de lavado?",sub:"",palabra:true,wide:true,items:CONV_DEF}
+];
 const FT_LECTURA=`
 <p class="big">El lavado mira <b>hacia atrás</b>: ¿de dónde viene el dinero? El financiamiento al terrorismo mira <b>hacia adelante</b>: ¿a dónde va?</p>
 <p>Por eso en el FT el dinero puede ser <b>limpio</b>: un sueldo, un donativo, una camioneta. Lo que lo vuelve delito es que <b>sabes</b> que va para terroristas o para cometer uno de los delitos de la lista. El CPF dice «recursos <b>de cualquier naturaleza</b>» y la Nota Interpretativa de la R.5 del GAFI dice «procedan de una fuente <b>legítima o ilegítima</b>».</p>
@@ -807,6 +862,7 @@ function logScore(ok,n){const d=new Date().toLocaleDateString("es-MX",{day:"nume
 /* De qué módulo y documento es cada serie. */
 const DOCS={
  gafi:{mod:"Módulo 1",doc:"Las Recomendaciones del GAFI",ver:"Traducción al español de diciembre de 2025 (GAFILAT)"},
+ conv:{mod:"Módulo 1",doc:"Refuerzo · convenciones internacionales",ver:"GAFI dic-2025: R.3, R.4, R.5, R.36 y Metodología crit. 36.1 · ENR 2023 cap. III",lectura:CONV_LECTURA},
  ft:{mod:"Módulo 1",doc:"Refuerzo · financiamiento al terrorismo",ver:"CPF, última reforma DOF 13-03-2026 · GAFI R.5 y su Nota Interpretativa (dic-2025)",lectura:FT_LECTURA},
  dcg:{mod:"Módulo 2",doc:"Plazos de reportes y avisos por sector · DCG",ver:"Bancos, SOFOM, Casas de cambio, Centros cambiarios, Transmisores, SOCAP e ITF · texto vigente de cada DCG",lectura:REP_TARJETA},
  ley:{mod:"Módulo 2",doc:"LFPIORPI · artículo 17, actividades vulnerables",ver:"Texto vigente, última reforma DOF 16-07-2025"},
@@ -814,13 +870,14 @@ const DOCS={
  rs:{mod:"Módulo 3",doc:"Reglamento de Supervisión de la CNBV",ver:"Compilación CNBV con la reforma del 21-jul-2021"},
  enr:{mod:"Módulo 3",doc:"Evaluación Nacional de Riesgos 2023 · niveles de riesgo",ver:"SHCP-UIF, noviembre de 2023, apartado XI · sólo niveles 2023",lecturaHtml:enrLectura}
 };
-const DOC_DE={"r9-23":"gafi","r26-35":"gafi","r1-40":"gafi","ft-ld":"ft","ft-pz":"ft","ft-ls":"ft","ft-pn":"ft","ft-fu":"ft","m2-fr":"ley","m2-umb":"ley","m2-rep":"dcg","m2-av":"dcg","m3-fr":"lia","m3-inc":"lia","m3-tit":"rs","enr-f":"enr","enr-sf":"enr","enr-av":"enr","enr-rf":"enr","enr-x-f":"enr","enr-x-sf":"enr","enr-x-av":"enr","enr-pares":"enr","enr-por":"enr"};
+const DOC_DE={"r9-23":"gafi","r26-35":"gafi","r1-40":"gafi","ft-ld":"ft","ft-pz":"ft","ft-ls":"ft","ft-pn":"ft","ft-fu":"ft","cv-nom":"conv","cv-anio":"conv","cv-para":"conv","cv-fz":"conv","cv-rec":"conv","cv-def":"conv","m2-fr":"ley","m2-umb":"ley","m2-rep":"dcg","m2-av":"dcg","m3-fr":"lia","m3-inc":"lia","m3-tit":"rs","enr-f":"enr","enr-sf":"enr","enr-av":"enr","enr-rf":"enr","enr-x-f":"enr","enr-x-sf":"enr","enr-x-av":"enr","enr-pares":"enr","enr-por":"enr"};
 const docOf=d=>DOCS[DOC_DE[d.id]];
 const DECKS=[
  {id:"r9-23",n:"R.9 a R.23",sub:"Medidas preventivas",items:rng(9,23)},
  {id:"r26-35",n:"R.26 a R.35",sub:"Autoridades",items:rng(26,35)},
  {id:"r1-40",n:"R.1 a R.40",sub:"Las 40",items:R},
  ...FTD,
+ ...CONVD,
  ...M2,
  ...M3,
  ...ENR,
