@@ -581,17 +581,17 @@ const FT_LISTA=[
  ftw("Fr. I 5)","Art. 368 Quinquies","Robo","Art. 139 Quáter, fr. I, numeral 5): el CPF lo llama sólo «Robo». El art. 368 Quinquies es el robo de material radiactivo, material nuclear, combustible nuclear, mineral radiactivo o fuente de radiación.",["robo de material radiactivo","robo de material nuclear","robo material radiactivo"]),
  ftw("Fr. II","Arts. 10 y 13 de una ley especial","Reservas mineras","Ley que Declara Reservas Mineras los Yacimientos de Uranio, Torio y demás substancias de las que se obtengan isótopos hendibles (art. 139 Quáter, fr. II)",["ley de reservas mineras","uranio y torio","uranio"])
 ];
-/* Penas: [clave, quién, prisión [min,max], multa [min,max], unidad «uma» o «dm», nota] */
+/* Penas: [clave, quién, prisión [min,max], multa [min,max], unidad «uma» o «dm», nota]. En orden de multa (escalera: encubrir 100 · amenazar 200 · cometer o financiar 400 · lavar 1,000), a petición de Maribel, 18-oct. */
 const PEN=[
- ["Art. 139","Terrorismo (el acto)",[15,40],[400,1200],"uma","Párrafo reformado DOF 07-06-2024: veces el valor diario de la UMA."],
- ["Art. 139 Quáter","Financiamiento al terrorismo",[15,40],[400,1200],"uma","«La misma pena señalada en el artículo 139»."],
- ["Art. 139 Bis","Encubrir a un terrorista",[1,9],[100,300],"dm",""],
- ["Art. 139 Ter","Amenazar con terrorismo",[5,15],[200,600],"dm",""],
+ ["Art. 139 Bis","Encubrir a un terrorista",[1,9],[100,300],"dm","Escalón 100: encubrir."],
  ["Art. 139 Quinquies","Encubrir a quien financió (FT)",[1,9],[100,300],"dm","Igual que el 139 Bis."],
- ["Art. 148 Bis","Terrorismo internacional",[15,40],[400,1200],"dm","¡Mismos números que el 139, pero en DÍAS MULTA! Es la trampa del simulador."],
- ["Art. 148 Ter","Encubrir a un terrorista (internacional)",[5,10],[100,300],"dm",""],
- ["Art. 148 Quáter","Amenazar con terrorismo internacional",[6,12],[200,600],"dm",""],
- ["Art. 400 Bis","Lavado (operaciones con recursos de procedencia ilícita)",[5,15],[1000,5000],"dm","Para comparar."]
+ ["Art. 148 Ter","Encubrir a un terrorista (internacional)",[5,10],[100,300],"dm","Mismo escalón; la prisión del internacional es 5–10."],
+ ["Art. 139 Ter","Amenazar con terrorismo",[5,15],[200,600],"dm","Escalón 200: amenazar."],
+ ["Art. 148 Quáter","Amenazar con terrorismo internacional",[6,12],[200,600],"dm","Mismo escalón; la prisión del internacional es 6–12."],
+ ["Art. 148 Bis","Terrorismo internacional",[15,40],[400,1200],"dm","Escalón 400: ¡mismos números que el 139, pero en DÍAS MULTA! Es la trampa del simulador."],
+ ["Art. 139","Terrorismo (el acto)",[15,40],[400,1200],"uma","Escalón 400 en UMA. Párrafo reformado DOF 07-06-2024: veces el valor diario de la UMA."],
+ ["Art. 139 Quáter","Financiamiento al terrorismo",[15,40],[400,1200],"uma","«La misma pena señalada en el artículo 139»."],
+ ["Art. 400 Bis","Lavado (operaciones con recursos de procedencia ilícita)",[5,15],[1000,5000],"dm","Escalón 1,000: lavar. Para comparar."]
 ];
 const fmtN=n=>n.toLocaleString("es-MX");
 const FT_PENAS=PEN.map(([k,nom,p,m,u,nota])=>({k,nom,t:nota,g:"",parts:[
@@ -641,17 +641,19 @@ const FT_LECTURA=`
 <h3>La pena: la del terrorismo, y fíjate en la unidad</h3>
 <p>El 139 Quáter no tiene pena propia: «la misma pena señalada en el artículo 139». Son <b>15 a 40 años</b> y <b>400 a 1,200 veces el valor diario de la UMA</b> (reforma DOF 07-06-2024).</p>
 <p class="ojo"><b>La trampa del simulador:</b> el terrorismo <b>internacional</b> (art. 148 Bis) tiene los <b>mismos números</b>, 15 a 40 años y 400 a 1,200, pero en <b>días multa</b>. Regla: <b>nacional y FT = UMA</b>; internacional, encubrir y amenazar = días multa.</p>
-<table><thead><tr><th>Artículo</th><th>Conducta</th><th>Prisión</th><th>Multa</th></tr></thead><tbody>
-<tr><td>139</td><td>Terrorismo</td><td>15–40</td><td>400–1,200 <b>UMA</b></td></tr>
-<tr><td>139 Quáter</td><td>FT</td><td>15–40</td><td>400–1,200 <b>UMA</b></td></tr>
-<tr><td>139 Bis</td><td>Encubrir a un terrorista</td><td>1–9</td><td>100–300 días multa</td></tr>
-<tr><td>139 Ter</td><td>Amenazar con terrorismo</td><td>5–15</td><td>200–600 días multa</td></tr>
-<tr><td>139 Quinquies</td><td>Encubrir a quien financió</td><td>1–9</td><td>100–300 días multa</td></tr>
-<tr><td>148 Bis</td><td>Terrorismo internacional</td><td>15–40</td><td>400–1,200 <b>días multa</b></td></tr>
-<tr><td>148 Ter</td><td>Encubrir (internacional)</td><td>5–10</td><td>100–300 días multa</td></tr>
-<tr><td>148 Quáter</td><td>Amenazar (internacional)</td><td>6–12</td><td>200–600 días multa</td></tr>
-<tr><td>400 Bis</td><td>Lavado</td><td>5–15</td><td>1,000–5,000 días multa</td></tr>
+<p><b>En orden de multa es una escalera:</b> encubro 100 · amenazo 200 · ataco o financio 400 · lavo mil. La multa se duplica de escalón en escalón hasta el terrorismo; el lavado salta a 1,000–5,000.</p>
+<table><thead><tr><th>Multa</th><th>Artículo</th><th>Conducta</th><th>Prisión</th></tr></thead><tbody>
+<tr><td><b>100–300 días multa</b></td><td>139 Bis</td><td>Encubrir a un terrorista</td><td>1–9</td></tr>
+<tr><td></td><td>139 Quinquies</td><td>Encubrir a quien financió</td><td>1–9</td></tr>
+<tr><td></td><td>148 Ter</td><td>Encubrir (internacional)</td><td>5–10</td></tr>
+<tr><td><b>200–600 días multa</b></td><td>139 Ter</td><td>Amenazar con terrorismo</td><td>5–15</td></tr>
+<tr><td></td><td>148 Quáter</td><td>Amenazar (internacional)</td><td>6–12</td></tr>
+<tr><td><b>400–1,200 días multa</b></td><td>148 Bis</td><td>Terrorismo internacional</td><td>15–40</td></tr>
+<tr><td><b>400–1,200 UMA</b></td><td>139</td><td>Terrorismo</td><td>15–40</td></tr>
+<tr><td></td><td>139 Quáter</td><td>FT</td><td>15–40</td></tr>
+<tr><td><b>1,000–5,000 días multa</b></td><td>400 Bis</td><td>Lavado</td><td>5–15</td></tr>
 </tbody></table>
+<p class="nota">Gancho: «Encubro 100, amenazo 200, ataco 400, lavo mil». Trampa: el 139 Quinquies (encubrir a quien financió, escalón 100) no es el 139 Quáter (FT, escalón 400). La escalera y el gancho son criterio didáctico de 360Educa.</p>
 <h3>Las definiciones que te preguntan</h3>
 <p>El examen te da un texto y pregunta de quién es. Busca la palabra que delata:</p>
 <ul><li><b>«actos en contra de bienes o servicios… alarma, temor o terror»</b>, sin fondos → <b>terrorismo</b> (CPF 139). Es el distractor.</li><li><b>«asistencia, apoyo o conspiración»</b> y <b>«lícitos como ilícitos»</b> → <b>GAFILAT</b>.</li><li><b>«aportación, financiación o recaudación»</b> + «alarma, temor o terror» → <b>CNBV</b>.</li><li><b>«Al que… aporte o recaude»</b>, la lista de delitos y «territorio nacional o en el extranjero» → <b>CPF</b> (139 Quáter).</li><li><b>«Los países deben tipificar… Convenio Internacional para la Represión de la Financiación del Terrorismo»</b> → <b>GAFI</b> (R.5).</li></ul>
