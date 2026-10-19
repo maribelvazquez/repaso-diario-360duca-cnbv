@@ -1247,18 +1247,18 @@ const SIM_BANK=[].concat(
 /* ===== Simulador del examen ===== */
 const SIM_PLAN=[
  {mod:1,nombre:"Módulo 1 · Básicos",rc:14/26,bloques:[
-  {b:1,t:"1.1 Conceptos básicos",n:7},{b:2,t:"1.2.1 Organismos internacionales",n:3},{b:3,t:"1.2.2 GAFI",n:2},
-  {b:4,t:"1.2.3 Recomendaciones del GAFI",n:11},{b:5,t:"1.3 Autoridades nacionales",n:3}]},
+  {b:1,t:"1.1 Conceptos básicos",n:8},{b:2,t:"1.2.1 Organismos internacionales",n:4},{b:3,t:"1.2.2 GAFI",n:2},
+  {b:4,t:"1.2.3 Recomendaciones del GAFI",n:13},{b:5,t:"1.3 Autoridades nacionales",n:3}]},
  {mod:2,nombre:"Módulo 2 · Técnicos",rc:14/90,bloques:[
-  {b:1,t:"DCG: objeto, identificación y conocimiento del cliente",n:9},{b:2,t:"Reportes",n:8},{b:3,t:"Monitoreo y sistemas automatizados",n:9},
+  {b:1,t:"DCG: objeto, identificación y conocimiento del cliente",n:8},{b:2,t:"Reportes",n:7},{b:3,t:"Monitoreo y sistemas automatizados",n:8},
   {b:4,t:"Avisos de Control y de acciones; asunto relevante",n:3},{b:5,t:"Capacitación, expedientes y requerimientos",n:6},
-  {b:6,t:"Confidencialidad, comisionistas, filiales y conservación",n:7},{b:7,t:"Intercambio de información y Lista de Personas Bloqueadas",n:8},
-  {b:8,t:"Comité de Comunicación y Control y Oficial de Cumplimiento",n:6},{b:9,t:"Modelos novedosos",n:3},{b:10,t:"Centros cambiarios y transmisores",n:7},
+  {b:6,t:"Confidencialidad, comisionistas, filiales y conservación",n:6},{b:7,t:"Intercambio de información y Lista de Personas Bloqueadas",n:7},
+  {b:8,t:"Comité de Comunicación y Control y Oficial de Cumplimiento",n:5},{b:9,t:"Modelos novedosos",n:3},{b:10,t:"Centros cambiarios y transmisores",n:6},
   {b:11,t:"ITF",n:4},{b:12,t:"Sanciones",n:3},{b:13,t:"Propietario real",n:4},{b:14,t:"Plazos por sector y asesores en inversiones",n:4},
-  {b:15,t:"LFPIORPI",n:8},{b:16,t:"Tipologías",n:1}]},
+  {b:15,t:"LFPIORPI",n:7},{b:16,t:"Tipologías",n:1}]},
  {mod:3,nombre:"Módulo 3 · Auditoría y riesgos",rc:17/39,bloques:[
-  {b:1,t:"Lineamientos del Informe de Auditoría",n:7},{b:2,t:"Reglamento de Supervisión de la CNBV",n:6},{b:3,t:"Guía del EBR del GAFI (bancos)",n:3},
-  {b:4,t:"Basilea · gestión de riesgos de BC/FT",n:5},{b:5,t:"Guía CNBV para la Metodología de Evaluación de Riesgos",n:6},
+  {b:1,t:"Lineamientos del Informe de Auditoría",n:8},{b:2,t:"Reglamento de Supervisión de la CNBV",n:7},{b:3,t:"Guía del EBR del GAFI (bancos)",n:3},
+  {b:4,t:"Basilea · gestión de riesgos de BC/FT",n:6},{b:5,t:"Guía CNBV para la Metodología de Evaluación de Riesgos",n:7},
   {b:6,t:"Grados de riesgo del cliente",n:5},{b:7,t:"ENR 2023",n:5},{b:8,t:"Corrupción y Guía Anticorrupción",n:2}]}
 ];
 const SIM_BY_ID={};SIM_BANK.forEach(q=>SIM_BY_ID[q.id]=q);
@@ -1291,13 +1291,14 @@ function simLoad(){return store.get("sim.state",null)}
 const fmtT=ms=>{const s=Math.floor(ms/1000),h=Math.floor(s/3600),mi=Math.floor(s%3600/60),se=s%60;return (h?h+":":"")+String(mi).padStart(2,"0")+":"+String(se).padStart(2,"0")};
 const SIM_TIPO={relaciona:"Relaciona",combinacion:"Selecciona las que correspondan",caso:"Caso",directa:"Pregunta directa"};
 let simTimer=null;
+const SIM_LIMIT=4*3600*1000; /* 4 horas, como el examen (convocatoria 2026) */
 
 function renderSimCard(){
   const st=simLoad(),busy=st&&!st.done;
   const tot=SIM_BANK.length,parts=SIM_PLAN.map(p=>{const n=simPool(p.mod).length;return n?`M${p.mod}: ${n}`:`M${p.mod}: en camino`}).join(" · ");
   const nuevas=SIM_PLAN.reduce((s,p)=>s+simUnseen(p.mod),0);
   $("#simcard").innerHTML=`<div class="sc-top"><span class="eyebrow">Examen completo</span><h2>Simulador del examen</h2>
-   <p>Preguntas en el orden del examen, con cronómetro. Al terminar ves tu calificación por módulo y por tema, en qué te equivocaste y por qué, y lo puedes imprimir en PDF. Cada vez te salen primero las preguntas que no has visto, y entre ellas las de los temas donde más se falló en el simulador del grupo.</p></div>
+   <p>155 preguntas en el orden del examen y en la proporción reportada para el examen (M1 19 %, M2 53 %, M3 28 %), con 4 horas: al acabarse el tiempo se califica solo. Al terminar ves tu calificación por módulo y por tema, en qué te equivocaste y por qué, y lo puedes imprimir en PDF. Cada vez te salen primero las preguntas que no has visto, y entre ellas las de los temas donde más se falló en el simulador del grupo.</p></div>
    <div class="sc-stats"><span><b>${tot}</b> preguntas en el banco</span><span>${parts}</span><span><b>${nuevas}</b> nuevas para ti</span></div>
    <div class="sc-act"><button class="btn" id="simgo">${busy?"Continuar el simulador":"Empezar un simulador"}</button>${store.get("sim.last",null)?`<button class="btn ghost" id="simlast">Ver el último resultado</button>`:""}</div>`;
   $("#simgo").onclick=()=>go(busy?"#sim-run":"#sim");
@@ -1310,7 +1311,7 @@ function renderSimSetup(){
   const opts=SIM_PLAN.map(p=>{const ok=simReady(p.mod),n=simPool(p.mod).length;
     return `<label class="sim-opt ${ok?"":"off"}"><input type="checkbox" value="${p.mod}" ${ok?"checked":"disabled"}> <span><b>${esc(p.nombre)}</b> · ${simQuota(p.mod)} preguntas<br><small>${ok?`${n} en el banco · ${simUnseen(p.mod)} sin ver`:n?`Banco incompleto (${n}); faltan preguntas en algún tema`:"El banco de este módulo todavía no llega"}</small></span></label>`}).join("");
   $("#simbox").innerHTML=`<div class="sim-setup"><h2>Arma tu simulador</h2>
-   <p class="note">El examen trae los tres módulos en este orden: Básicos, Técnicos, y Auditoría y riesgos (155 preguntas). Elige qué módulos presentas hoy. Puedes salir y volver: tu avance se guarda en este navegador.</p>
+   <p class="note">El examen trae los tres módulos en este orden: Básicos, Técnicos, y Auditoría y riesgos (155 preguntas: 30, 82 y 43, en la proporción 19 · 53 · 28 del esquema reportado para el examen; 4 horas). Elige qué módulos presentas hoy. Puedes salir y volver: tu avance se guarda en este navegador.</p>
    <div class="sim-opts">${opts}</div>
    <div class="sc-act"><button class="btn" id="simstart">Empezar</button><span class="note" id="simmsg"></span></div></div>`;
   $("#simstart").onclick=()=>{const mods=[...document.querySelectorAll(".sim-opt input:checked")].map(i=>+i.value);
@@ -1339,7 +1340,7 @@ function renderSimRun(){
   $("#simfin").onclick=()=>{const left=st.items.filter(x=>x.ans==null).length,fl=st.items.filter(x=>x.flag).length;
     $("#simconf").innerHTML=`<span class="note">${left?`Te faltan ${left} sin contestar (cuentan como error). `:""}${fl?`Tienes ${fl} marcadas. `:""}¿Calificar ya?</span> <button class="btn" id="simyes">Sí, calificar</button>`;
     $("#simyes").onclick=()=>simGrade(st)};
-  clearInterval(simTimer);const tick=()=>{const c=$("#simclock");if(c)c.textContent=fmtT(Date.now()-st.t0)};tick();simTimer=setInterval(tick,1000);
+  clearInterval(simTimer);const tick=()=>{const c=$("#simclock"),r=SIM_LIMIT-(Date.now()-st.t0);if(r<=0){clearInterval(simTimer);const x=simLoad();if(x&&!x.done)simGrade(x);return}if(c){c.textContent="Quedan "+fmtT(r);c.style.color=r<15*60000?"var(--bad)":""}};tick();simTimer=setInterval(tick,1000);
 }
 
 function simGrade(st){
